@@ -40,13 +40,13 @@ public class AutonomousBlueFar extends OpMode {
     private final Pose startPose = new Pose(60, 9, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 84, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(45, 84, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose1 = new Pose(12, 84, Math.toRadians(0));
+    private final Pose pickupPose1 = new Pose(14, 84, Math.toRadians(0));
     private final Pose pickup2Pose = new Pose(45, 60, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose2 = new Pose(12, 60, Math.toRadians(0));
+    private final Pose pickupPose2 = new Pose(14, 60, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(45, 36, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose3 = new Pose(12, 36, Math.toRadians(0));
+    private final Pose pickupPose3 = new Pose(14, 36, Math.toRadians(0));
     private final Pose gate1 = new Pose(48, 72, Math.toRadians(90));
-    private final Pose gate2 = new Pose(8.5,72,Math.toRadians(90));
+    private final Pose gate2 = new Pose(13.5,72,Math.toRadians(90));
     private Path scorePreload;
     private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,gateSigma,gateSigma2,gateSigma3;
     public void buildPaths(){
@@ -163,9 +163,8 @@ public class AutonomousBlueFar extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                if(!follower.isBusy())
-                    follower.followPath(scorePreload);
-                    setPathState(1);
+                follower.followPath(scorePreload);
+                setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()&&pathTimer.getElapsedTimeSeconds()>3) {
