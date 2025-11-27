@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.teamcode.Mechanics.SigmaClass;
+import org.firstinspires.ftc.teamcode.Mechanics.Color;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -23,9 +23,9 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "blueGoalAuto 🥶", group = "testing")
+@Autonomous(name = "blueGoalAuto 🥶", group = "Blue Testing")
 public class AutonomousBlueFar extends OpMode {
-    public SigmaClass colorSen= new SigmaClass();
+    public Color colorSen= new Color();
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -133,8 +133,8 @@ public class AutonomousBlueFar extends OpMode {
         spind.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         spind.setPower(1);
     }
-    private void setSpindToColor(SigmaClass.DetectedColor color){
-        SigmaClass.DetectedColor currentColor = colorSen.getColor();
+    private void setSpindToColor(Color.DetectedColor color){
+        Color.DetectedColor currentColor = colorSen.getColor();
         int counter2=0;
         int counter=0;
         int time=100;
@@ -154,9 +154,9 @@ public class AutonomousBlueFar extends OpMode {
             String[] motifList= motif.split("");
             for(String a : motifList){
                 if(a.equals("P"))
-                    setSpindToColor(SigmaClass.DetectedColor.PURPLE);
+                    setSpindToColor(Color.DetectedColor.PURPLE);
                 else
-                    setSpindToColor(SigmaClass.DetectedColor.GREEN);
+                    setSpindToColor(Color.DetectedColor.GREEN);
             }
         }
     }

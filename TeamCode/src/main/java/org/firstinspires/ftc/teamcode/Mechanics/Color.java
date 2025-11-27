@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class SigmaClass {
+public class Color {
     NormalizedColorSensor colorSensor;
     public enum DetectedColor{
         PURPLE,
