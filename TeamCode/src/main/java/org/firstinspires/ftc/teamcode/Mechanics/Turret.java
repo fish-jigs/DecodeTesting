@@ -15,7 +15,7 @@ public class Turret {
         dtheta -= theta;
         dtheta = dtheta % (2 * Math.PI);
 
-        if (dtheta < -Math.PI) {
+        if (dtheta < -Math.toRadians(190)) {
             dtheta += 2 * Math.PI;
         }
         else if (dtheta > Math.PI) {
