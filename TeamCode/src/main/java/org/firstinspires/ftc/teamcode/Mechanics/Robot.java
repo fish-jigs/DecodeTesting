@@ -10,7 +10,7 @@ public class Robot {
     public static DcMotorEx turret, spindexer, flywheel, intake;
 
     public static Servo hood, transfer;
-
+    public static Color colorSen;
     public static void init(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turn");
         spindexer = hardwareMap.get(DcMotorEx.class, "spind");
@@ -30,6 +30,9 @@ public class Robot {
 
         hood = hardwareMap.get(Servo.class, "hood");
         transfer = hardwareMap.get(Servo.class, "trans");
+
+
+        colorSen.init(hardwareMap);
     }
 
     public static void reset() {

@@ -4,39 +4,38 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import static org.firstinspires.ftc.teamcode.Mechanics.Robot.spindexer;
+import static org.firstinspires.ftc.teamcode.Mechanics.Robot.colorSen;
+import static org.firstinspires.ftc.teamcode.Mechanics.Robot.transfer;
 
 public class Spind {
-    public DcMotor spindMotor;
     public double spindexerAngle;
     private Color colorSen;
     public Color.DetectedColor[] ballList = {Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN};
 
-    public void init(HardwareMap hardwareMap, Color cs) {
-        spindMotor = hardwareMap.get(DcMotor.class, "spind");
-        colorSen = cs;
-    }
 
-    private void spinTheDexer(int amount) {
+    private boolean spinTheDexer(int amount) {
         spindexerAngle += Constants.CPR / 6 * amount;
-        spindMotor.setTargetPosition((int) Math.round(spindexerAngle));
-        spindMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        spindMotor.setPower(1);
+        spindexer.setTargetPosition((int) Math.round(spindexerAngle));
+        spindexer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        spindexer.setPower(1);
+        if(spindexer.isBusy())
+            return false;
+        spindexer.setPower(0);
+        return true;
     }
 
-    private void setSpindToColor(Color.DetectedColor color) {
-        Color.DetectedColor currentColor = colorSen.getColor();
-        int counter2 = 0;
-        int counter = 0;
-        int time = 100;
-        while (currentColor != color && counter2 < 6) {
-            if (counter > time) {
-                spinTheDexer(1);
-                counter2++;
-                counter = 0;
+    private boolean setSpindToColor(Color.DetectedColor color) {
+        int index=-1;
+        for(int i=0;i<3;i++){
+            if (ballList[i]==color) {
+                index = i;
+                break;
             }
-            currentColor = colorSen.getColor();
-            counter++;
         }
+        if(index==-1)
+            return false;
+        return spinTheDexer(Math.min((getSigmaPosition()-index)*2,(3-index)*2));
     }
 
     private void updateBallList() {
@@ -59,18 +58,26 @@ public class Spind {
     }
 
     public int getSigmaPosition() {
-        return (int) ((spindMotor.getCurrentPosition()%Constants.CPR) / (Constants.CPR/3));
+        return (int) ((spindexer.getCurrentPosition()%Constants.CPR) / (Constants.CPR/3))-1;
     }
-    private void Launch3Balls(String motif) {
-        if (!motif.isEmpty()) {
+    private boolean launching = false;
+    public boolean Launch3Balls(String motif) throws InterruptedException {
+        if (!motif.isEmpty()&&!launching) {
             String[] motifList = motif.split("");
+            launching = true;
             for (String a : motifList) {
                 if (a.equals("P"))
                     setSpindToColor(Color.DetectedColor.PURPLE);
                 else
                     setSpindToColor(Color.DetectedColor.GREEN);
+                //launch the balls;
+                transfer.setPosition(.9);
+                Thread.sleep(75);
+                transfer.setPosition(.4);
             }
+            launching=false;
         }
+        return launching;
     }
 }
 
