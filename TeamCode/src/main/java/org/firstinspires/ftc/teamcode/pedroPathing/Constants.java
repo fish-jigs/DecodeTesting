@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
-    public static double CPR = ((((1+(46/17))) * (1+(46/11))) * 28);
+    public static double CPR = ((((1+(46D/17))) * (1+(46D/11))) * 28);
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(10.7)
             .forwardZeroPowerAcceleration(-59.57090583619754)
