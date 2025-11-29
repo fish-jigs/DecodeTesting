@@ -117,34 +117,34 @@ public class AutoBlueGoal extends OpMode {
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
-    @Override
-    public void init_loop() {
-        //this gets the motif, however it could be inconsistent, so i'll try to make it so the camera points at the thing until it gets the motif and then it can aim towards the goal.
-        List<AprilTagDetection> currentDetections = Vision.aprilTag.getDetections();
-        for(AprilTagDetection detection: currentDetections){
-            if(Vision.motif.isEmpty()) {
-                switch (detection.id) {
-                    case 21:
-                        Vision.motif = "GPP";
-                        Vision.visionPortal.stopStreaming();
-                        break;
-                    case 22:
-                        Vision.motif = "PGP";
-                        Vision.visionPortal.stopStreaming();
-                        break;
-                    case 23:
-                        Vision.motif = "PPG";
-                        Vision.visionPortal.stopStreaming();
-                        break;
-                    default:
-                        telemetry.addData("Skipping", "this sigma is NOT the obelisk", detection.id);
-                }
-
-            }
-        }
-        telemetry.addData("motif",Vision.motif);
-        telemetry.update();
-    }
+//    @Override
+//    public void init_loop() {
+//        //this gets the motif, however it could be inconsistent, so i'll try to make it so the camera points at the thing until it gets the motif and then it can aim towards the goal.
+//        List<AprilTagDetection> currentDetections = Vision.aprilTag.getDetections();
+//        for(AprilTagDetection detection: currentDetections){
+//            if(Vision.motif.isEmpty()) {
+//                switch (detection.id) {
+//                    case 21:
+//                        Vision.motif = "GPP";
+//                        Vision.visionPortal.stopStreaming();
+//                        break;
+//                    case 22:
+//                        Vision.motif = "PGP";
+//                        Vision.visionPortal.stopStreaming();
+//                        break;
+//                    case 23:
+//                        Vision.motif = "PPG";
+//                        Vision.visionPortal.stopStreaming();
+//                        break;
+//                    default:
+//                        telemetry.addData("Skipping", "this sigma is NOT the obelisk", detection.id);
+//                }
+//
+//            }
+//        }
+//        telemetry.addData("motif",Vision.motif);
+//        telemetry.update();
+//    }
 
     /**
      * This is the main loop of the OpMode, it will run repeatedly after clicking "Play".
