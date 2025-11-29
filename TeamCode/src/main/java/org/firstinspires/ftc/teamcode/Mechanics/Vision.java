@@ -2,19 +2,25 @@ package org.firstinspires.ftc.teamcode.Mechanics;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Vision {
-    public static String motif = "";
-    public static AprilTagProcessor aprilTag;
-    public static VisionPortal visionPortal;
-
-    private static void setManualExposure(int exposureMS, int gain) throws InterruptedException {
+    public String motif = "";
+    private static AprilTagProcessor aprilTag;
+    private static VisionPortal visionPortal;
+    private boolean USE_WEBCAM;
+    public void setManualExposure(int exposureMS, int gain) throws InterruptedException {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {
@@ -44,5 +50,55 @@ public class Vision {
         GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
         gainControl.setGain(gain);
         Thread.sleep(20);
+    }
+    public void initAprilTag(HardwareMap hardwareMap) {
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder().build();
+//
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // e.g. Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        aprilTag.setDecimation(3);
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
+        }
+    }
+    public String findMotif() {
+        if (motif.isEmpty()) {
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                switch (detection.id) {
+                    case 21:
+                        motif = "GPP";
+                        visionPortal.stopStreaming();
+                        break;
+                    case 22:
+                        motif = "PGP";
+                        visionPortal.stopStreaming();
+                        break;
+                    case 23:
+                        motif = "PPG";
+                        visionPortal.stopStreaming();
+                        break;
+                    default:
+                        telemetry.addData("Skipping", "this sigma is NOT the obelisk", detection.id);
+                }
+            }
+        }
+        return motif;
     }
 }

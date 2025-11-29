@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.Mechanics.Color;
+import org.firstinspires.ftc.teamcode.Mechanics.Spind;
+import org.firstinspires.ftc.teamcode.Mechanics.Vision;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -23,17 +25,17 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "blueGoalAuto 🥶", group = "Blue Testing")
+@Autonomous(name = "blue far auto 🥶", group = "Blue Testing")
 public class AutonomousBlueFar extends OpMode {
     public Color colorSen= new Color();
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     String motif = "";
+    public Vision camera;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-
-    private DcMotor spind;
+    private Spind spind;
     private double spindexerAngle;
     private boolean opModeIsActive = false;
     private int pathState;
@@ -101,65 +103,7 @@ public class AutonomousBlueFar extends OpMode {
                 .setLinearHeadingInterpolation(pickupPose3.getHeading(),scorePose.getHeading())
                 .build();
     }
-    private void initAprilTag() {
-        // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder().build();
-//
-        // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // e.g. Some typical detection data using a Logitech C920 WebCam
-        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-        // Note: Decimation can be changed on-the-fly to adapt during a match.
-        aprilTag.setDecimation(3);
 
-        // Create the vision portal by using a builder.
-        if (USE_WEBCAM) {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .addProcessor(aprilTag)
-                    .build();
-        } else {
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(BuiltinCameraDirection.BACK)
-                    .addProcessor(aprilTag)
-                    .build();
-        }
-    }
-    private void spinTheDexer(int amount){
-        spindexerAngle+= Constants.CPR/6 *amount;
-        spind.setTargetPosition((int)Math.round(spindexerAngle));
-        spind.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        spind.setPower(1);
-    }
-    private void setSpindToColor(Color.DetectedColor color){
-        Color.DetectedColor currentColor = colorSen.getColor();
-        int counter2=0;
-        int counter=0;
-        int time=100;
-        while(currentColor!=color&&opModeIsActive&&counter2<6){
-            if(counter>time){
-                spinTheDexer(1);
-                counter2++;
-                counter=0;
-            }
-            currentColor = colorSen.getColor(telemetry);
-            telemetry.addData("color:", currentColor.name());
-            counter++;
-        }
-    }
-    private void Launch3Balls(){
-        if(!motif.isEmpty()){
-            String[] motifList= motif.split("");
-            for(String a : motifList){
-                if(a.equals("P"))
-                    setSpindToColor(Color.DetectedColor.PURPLE);
-                else
-                    setSpindToColor(Color.DetectedColor.GREEN);
-            }
-        }
-    }
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
@@ -246,37 +190,6 @@ public class AutonomousBlueFar extends OpMode {
 
         }
     }
-    private void setManualExposure(int exposureMS, int gain) throws InterruptedException {
-        // Wait for the camera to be open, then use the controls
-
-        if (visionPortal == null) {
-            return;
-        }
-
-        // Make sure camera is streaming before we try to set the exposure controls
-        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
-            while ((visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-                Thread.sleep(20);
-            }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
-        }
-
-        // Set camera controls unless we are stopping.
-
-        ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-            exposureControl.setMode(ExposureControl.Mode.Manual);
-            Thread.sleep(50);
-        }
-        exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-        Thread.sleep(20);
-        GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-        gainControl.setGain(gain);
-        Thread.sleep(20);
-    }
     public void setPathState(int pState){
         pathState=pState;
         pathTimer.resetTimer();
@@ -284,11 +197,12 @@ public class AutonomousBlueFar extends OpMode {
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
     public void loop() {
-
         // These loop the movements of the robot, these must be called continuously in order to work
         follower.update();
         autonomousPathUpdate();
-
+        if(motif.isEmpty()){
+            motif = camera.findMotif();
+        }
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
@@ -303,14 +217,15 @@ public class AutonomousBlueFar extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-        spind=hardwareMap.get(DcMotor.class,"spind");
+        colorSen.init(hardwareMap);
+        spind.init(hardwareMap,colorSen);
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
-        initAprilTag();
+        camera.initAprilTag(hardwareMap);
         if (USE_WEBCAM) {
             try {
-                setManualExposure(6, 250);
+                camera.setManualExposure(6, 250);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -321,28 +236,7 @@ public class AutonomousBlueFar extends OpMode {
     @Override
     public void init_loop() {
         //this gets the motif, however it could be inconsistent, so i'll try to make it so the camera points at the thing until it gets the motif and then it can aim towards the goal.
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        for(AprilTagDetection detection: currentDetections){
-            if(motif.isEmpty()) {
-                switch (detection.id) {
-                    case 21:
-                        motif = "GPP";
-                        visionPortal.stopStreaming();
-                        break;
-                    case 22:
-                        motif = "PGP";
-                        visionPortal.stopStreaming();
-                        break;
-                    case 23:
-                        motif = "PPG";
-                        visionPortal.stopStreaming();
-                        break;
-                    default:
-                        telemetry.addData("Skipping", "this sigma is NOT the obelisk", detection.id);
-                }
-
-            }
-        }
+        motif = camera.findMotif();
         telemetry.addData("motif",motif);
         telemetry.update();
     }
@@ -351,7 +245,6 @@ public class AutonomousBlueFar extends OpMode {
      * It runs all the setup actions, including building paths and starting the path system **/
     @Override
     public void start() {
-        colorSen.init(hardwareMap);
         opModeIsActive=true;
         opmodeTimer.resetTimer();
         setPathState(0);

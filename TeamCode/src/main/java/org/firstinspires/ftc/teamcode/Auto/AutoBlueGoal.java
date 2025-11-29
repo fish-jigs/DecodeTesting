@@ -23,7 +23,7 @@ public class AutoBlueGoal extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
-
+    private Vision camera;
     private String pathState;
 
 
@@ -120,29 +120,8 @@ public class AutoBlueGoal extends OpMode {
     @Override
     public void init_loop() {
         //this gets the motif, however it could be inconsistent, so i'll try to make it so the camera points at the thing until it gets the motif and then it can aim towards the goal.
-        List<AprilTagDetection> currentDetections = Vision.aprilTag.getDetections();
-        for(AprilTagDetection detection: currentDetections){
-            if(Vision.motif.isEmpty()) {
-                switch (detection.id) {
-                    case 21:
-                        Vision.motif = "GPP";
-                        Vision.visionPortal.stopStreaming();
-                        break;
-                    case 22:
-                        Vision.motif = "PGP";
-                        Vision.visionPortal.stopStreaming();
-                        break;
-                    case 23:
-                        Vision.motif = "PPG";
-                        Vision.visionPortal.stopStreaming();
-                        break;
-                    default:
-                        telemetry.addData("Skipping", "this sigma is NOT the obelisk", detection.id);
-                }
 
-            }
-        }
-        telemetry.addData("motif",Vision.motif);
+        telemetry.addData("motif",camera.motif);
         telemetry.update();
     }
 
@@ -179,5 +158,6 @@ public class AutoBlueGoal extends OpMode {
      **/
     @Override
     public void stop() {
+
     }
 }
