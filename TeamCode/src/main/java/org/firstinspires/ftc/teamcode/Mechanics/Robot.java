@@ -10,14 +10,13 @@ public class Robot {
     public static DcMotorEx turret, spindexer, flywheel, intake;
 
     public static Servo hood, transfer;
-    public static Color colorSen;
+    public static Vision camera;
     public static void init(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turn");
         spindexer = hardwareMap.get(DcMotorEx.class, "spind");
         flywheel = hardwareMap.get(DcMotorEx.class, "shot");
         intake = hardwareMap.get(DcMotorEx.class, "inta");
 
-        flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         spindexer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -26,13 +25,17 @@ public class Robot {
 
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         spindexer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        spindexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         hood = hardwareMap.get(Servo.class, "hood");
         transfer = hardwareMap.get(Servo.class, "trans");
 
-
-        colorSen.init(hardwareMap);
+        //camera.initAprilTag(hardwareMap);
+        Color.init(hardwareMap);
     }
 
     public static void reset() {

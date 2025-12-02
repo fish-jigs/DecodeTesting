@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 import org.firstinspires.ftc.teamcode.Mechanics.Shooter;
+import org.firstinspires.ftc.teamcode.Mechanics.Spind;
 import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -26,13 +27,14 @@ public class redT extends OpMode {
     private boolean coooooking = true;
     private boolean coooooking2 = true;
 
-
+    private double spindPos = 0;
     private Follower follower;
     public static Pose startingPose = new Pose(108, 84, Math.toRadians(180));
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
     private boolean manual = true;
+    private boolean red = true;
 
     @Override
     public void init() {
@@ -95,29 +97,31 @@ public class redT extends OpMode {
         }
         if (gamepad2.right_bumper)
             Shooter.setHood(0.2);
-        if (gamepad2.left_bumper)
-            Shooter.setHood(.5);
+//        if (gamepad2.left_bumper)
+//            Shooter.setHood(.5);
         if (gamepad2.right_trigger > .6) {
             Robot.transfer.setPosition(.9);
             try { Thread.sleep(70); } catch (Exception ignored) {}
             Robot.transfer.setPosition(.4);
         }
         if (gamepad2.y && coooooking) {
-            int target = (int)Math.round((Constants.CPR / 6.0) * (x));
-            Robot.spindexer.setTargetPosition(target);
-            Robot.spindexer.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            Robot.spindexer.setPower(1);
-            x += 1;
+            spindPos += .5;
+//            int target = (int)Math.round((Constants.CPR / 6.0) * (x));
+//            Robot.spindexer.setTargetPosition(target);
+//            Robot.spindexer.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//            Robot.spindexer.setPower(1);
+//            x += 1;
             coooooking = false;
         }
         else if (!gamepad2.y)
             coooooking = true;
         if (gamepad2.a && coooooking2){
-            int target = (int)Math.round((Constants.CPR / 6.0) * (x+1));
-            Robot.spindexer.setTargetPosition(target);
-            Robot.spindexer.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            Robot.spindexer.setPower(1);
-            x += 2;
+//            int target = (int)Math.round((Constants.CPR / 6.0) * (x+1));
+//            Robot.spindexer.setTargetPosition(target);
+//            Robot.spindexer.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//            Robot.spindexer.setPower(1);
+//            x += 2;
+            spindPos += 1;
             coooooking2 = false;
         }
         else if (!gamepad2.a)
@@ -127,13 +131,16 @@ public class redT extends OpMode {
         if (gamepad2.b)
             Robot.flywheel.setPower(0);
         if (gamepad2.left_trigger > .6)
-            Robot.flywheel.setPower(-1);
+            Robot.flywheel.setPower(-.3);
+        if (gamepad2.left_bumper)
+            red = !red;
 
         Robot.intake.setPower(gamepad2.left_stick_y * Math.abs(gamepad2.left_stick_y));
 
 
+        Spind.spinTheDexer(spindPos);
 
-        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), red);
 
 
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import org.firstinspires.ftc.teamcode.Mechanics.Spind;
+import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.Paths.paths;
 
 // Pedro imports
@@ -108,7 +110,7 @@ public class AutoBlueGoal extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-
+        camera.initAprilTag(hardwareMap);
 
         follower = Constants.createFollower(hardwareMap);
         paths.blueGoal(follower);
@@ -120,7 +122,7 @@ public class AutoBlueGoal extends OpMode {
     @Override
     public void init_loop() {
         //this gets the motif, however it could be inconsistent, so i'll try to make it so the camera points at the thing until it gets the motif and then it can aim towards the goal.
-
+        camera.findMotif();
         telemetry.addData("motif",camera.motif);
         telemetry.update();
     }
@@ -134,6 +136,8 @@ public class AutoBlueGoal extends OpMode {
         // These loop the movements of the robot, these must be called continuously in order to work
         follower.update();
         autonomousPathUpdate();
+
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false);
 
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);

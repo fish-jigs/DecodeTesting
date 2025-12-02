@@ -15,7 +15,9 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.Mechanics.Color;
+import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 import org.firstinspires.ftc.teamcode.Mechanics.Spind;
+import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.Mechanics.Vision;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -32,7 +34,7 @@ public class AutonomousBlueFar extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     String motif = "";
-    public Vision camera;
+    public Vision camera = new Vision();
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     private Spind spind;
@@ -42,13 +44,13 @@ public class AutonomousBlueFar extends OpMode {
     private final Pose startPose = new Pose(60, 9, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 84, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(45, 84, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose1 = new Pose(14, 84, Math.toRadians(0));
+    private final Pose pickupPose1 = new Pose(16, 84, Math.toRadians(0));
     private final Pose pickup2Pose = new Pose(45, 60, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose2 = new Pose(14, 60, Math.toRadians(0));
+    private final Pose pickupPose2 = new Pose(16, 60, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(45, 36, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose3 = new Pose(14, 36, Math.toRadians(0));
+    private final Pose pickupPose3 = new Pose(16, 36, Math.toRadians(0));
     private final Pose gate1 = new Pose(48, 72, Math.toRadians(90));
-    private final Pose gate2 = new Pose(13.5,72,Math.toRadians(90));
+    private final Pose gate2 = new Pose(15,72,Math.toRadians(90));
     private Path scorePreload;
     private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,gateSigma,gateSigma2,gateSigma3;
     public void buildPaths(){
@@ -104,7 +106,7 @@ public class AutonomousBlueFar extends OpMode {
                 .build();
     }
 
-    public void autonomousPathUpdate() {
+    public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
@@ -199,10 +201,15 @@ public class AutonomousBlueFar extends OpMode {
     public void loop() {
         // These loop the movements of the robot, these must be called continuously in order to work
         follower.update();
-        autonomousPathUpdate();
+        try {
+            autonomousPathUpdate();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if(motif.isEmpty()){
             motif = camera.findMotif();
         }
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false);
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
@@ -214,18 +221,18 @@ public class AutonomousBlueFar extends OpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void init() {
+        Robot.init(hardwareMap);
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
         colorSen.init(hardwareMap);
-        spind.init(hardwareMap,colorSen);
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
         camera.initAprilTag(hardwareMap);
         if (USE_WEBCAM) {
             try {
-                camera.setManualExposure(6, 250);
+                camera.setManualExposure(6, 250, telemetry);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -19,8 +20,8 @@ public class Vision {
     public String motif = "";
     private static AprilTagProcessor aprilTag;
     private static VisionPortal visionPortal;
-    private boolean USE_WEBCAM;
-    public void setManualExposure(int exposureMS, int gain) throws InterruptedException {
+    private final boolean USE_WEBCAM = true;
+    public void setManualExposure(int exposureMS, int gain, Telemetry telemetry) throws InterruptedException {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {

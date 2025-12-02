@@ -1,31 +1,36 @@
 package org.firstinspires.ftc.teamcode.Mechanics;
 
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static org.firstinspires.ftc.teamcode.Mechanics.Robot.spindexer;
-import static org.firstinspires.ftc.teamcode.Mechanics.Robot.colorSen;
 import static org.firstinspires.ftc.teamcode.Mechanics.Robot.transfer;
 
 public class Spind {
-    public double spindexerAngle;
-    private Color colorSen;
-    public Color.DetectedColor[] ballList = {Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN};
+    public static double spindexerAngle = 0, targetAngle = 0;
+    public static Color.DetectedColor[] ballList = {Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN};
 
 
-    private boolean spinTheDexer(int amount) {
-        spindexerAngle += Constants.CPR / 6 * amount;
-        spindexer.setTargetPosition((int) Math.round(spindexerAngle));
+    public static boolean spinTheDexer(double slot) {
+        targetAngle = Constants.CPR / 3 * slot;
+
+        spindexer.setTargetPosition((int)Math.round(targetAngle));
         spindexer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         spindexer.setPower(1);
-        if(spindexer.isBusy())
-            return false;
-        spindexer.setPower(0);
-        return true;
+
+        spindexerAngle = spindexer.getCurrentPosition();
+
+        if (Math.abs(spindexerAngle - targetAngle) <= 10) {
+            spindexer.setPower(0);
+            return true;
+        }
+        return false;
     }
 
-    private boolean setSpindToColor(Color.DetectedColor color) {
+    private static void setSpindToColor(Color.DetectedColor color) {
         int index=-1;
         for(int i=0;i<3;i++){
             if (ballList[i]==color) {
@@ -33,35 +38,38 @@ public class Spind {
                 break;
             }
         }
-        if(index==-1)
-            return false;
-        return spinTheDexer(Math.min((getSigmaPosition()-index)*2,(3-index)*2));
+        if(index!=-1)
+            spinTheDexer(index);
     }
-
-    private void updateBallList() {
+    public static void bruh(Telemetry telemetry){
+        if(ballList[getSigmaPosition()]== Color.DetectedColor.UNKNOWN)
+            ballList[getSigmaPosition()] = Color.getColor(telemetry);
+    }
+    public static boolean updateBallList() {
+        Timer timer = new Timer();
         for(int i =0;i<3;i++){
             ballList[i]= Color.DetectedColor.UNKNOWN;
         }
         int counter2 = 0;
-        int counter = 0;
-        int time = 100;
-        while (counter2 < 6) {
-            if(ballList[getSigmaPosition()]== Color.DetectedColor.UNKNOWN)
-                ballList[getSigmaPosition()]= colorSen.getColor();
-            if (counter > time) {
-                spinTheDexer(1);
+        if (counter2 < 3) {
+            if(spinTheDexer(counter2)&&Color.getColor()!= Color.DetectedColor.UNKNOWN) {
+                ballList[counter2] = Color.getColor();
                 counter2++;
-                counter = 0;
+                timer.resetTimer();
             }
-            counter++;
+            if(timer.getElapsedTimeSeconds()>1) {
+                timer.resetTimer();
+                counter2++;
+            }
         }
+        return true;
     }
 
-    public int getSigmaPosition() {
-        return (int) ((spindexer.getCurrentPosition()%Constants.CPR) / (Constants.CPR/3))-1;
+    public static int getSigmaPosition() {
+        return (int)Math.round(spindexerAngle / Constants.CPR * 3);
     }
-    private boolean launching = false;
-    public boolean Launch3Balls(String motif) throws InterruptedException {
+    private static boolean launching = false;
+    public static boolean Launch3Balls(String motif) throws InterruptedException {
         if (!motif.isEmpty()&&!launching) {
             String[] motifList = motif.split("");
             launching = true;
