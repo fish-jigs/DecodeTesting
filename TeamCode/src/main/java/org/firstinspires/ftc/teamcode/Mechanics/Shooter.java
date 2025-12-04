@@ -26,6 +26,10 @@ public class Shooter {
         hood.setPosition(pos);
     }
 
+    public static double getHood() {
+        return hood.getPosition();
+    }
+
 
     //Automation
     public static double autoShotHood(double x, double y) {
