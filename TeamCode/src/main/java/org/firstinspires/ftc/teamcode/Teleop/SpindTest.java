@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -28,7 +28,7 @@ public class SpindTest extends OpMode {
             }
         }
         if (gamepad1.x) {
-            Spind.updateBallList();
+            //Spind.updateBallList();
         }
         //Spind.spinTheDexer(slot);
         for(int i =0;i<3;i++) {

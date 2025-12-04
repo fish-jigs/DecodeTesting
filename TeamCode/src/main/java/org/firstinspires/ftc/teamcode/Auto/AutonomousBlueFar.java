@@ -110,10 +110,12 @@ public class AutonomousBlueFar extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                setPathState(1);
+                if(Spind.updateBallList(pathTimer,0.75)) {
+                    setPathState(1);
+                }
                 break;
             case 1:
-                if (!follower.isBusy()&&pathTimer.getElapsedTimeSeconds()>3) {
+                if (!follower.isBusy()) {
                     follower.followPath(gateSigma, true);
                     setPathState(2);
                 }
@@ -225,7 +227,6 @@ public class AutonomousBlueFar extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-        colorSen.init(hardwareMap);
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
@@ -255,7 +256,6 @@ public class AutonomousBlueFar extends OpMode {
         opModeIsActive=true;
         opmodeTimer.resetTimer();
         setPathState(0);
-
     }
 
     /** We do not use this because everything should automatically disable **/

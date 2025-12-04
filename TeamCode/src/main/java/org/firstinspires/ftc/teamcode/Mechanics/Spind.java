@@ -45,26 +45,17 @@ public class Spind {
         if(ballList[getSigmaPosition()]== Color.DetectedColor.UNKNOWN)
             ballList[getSigmaPosition()] = Color.getColor(telemetry);
     }
-    public static boolean updateBallList() {
-        Timer timer = new Timer();
-        for(int i =0;i<3;i++){
-            ballList[i]= Color.DetectedColor.UNKNOWN;
+    public static boolean updateBallList(Timer timer,double timeBetweenSpins) {
+        if(timer.getElapsedTimeSeconds()>3*timeBetweenSpins){
+            return true;
         }
-        int counter2 = 0;
-        if (counter2 < 3) {
-            if(spinTheDexer(counter2)&&Color.getColor()!= Color.DetectedColor.UNKNOWN) {
-                ballList[counter2] = Color.getColor();
-                counter2++;
-                timer.resetTimer();
-            }
-            if(timer.getElapsedTimeSeconds()>1) {
-                timer.resetTimer();
-                counter2++;
-            }
+        int index=(int)(timer.getElapsedTimeSeconds()/timeBetweenSpins);
+        if(spinTheDexer(index)&&Color.getColor()!= Color.DetectedColor.UNKNOWN) {
+            ballList[index] = Color.getColor();
+            timer.resetTimer();
         }
-        return true;
+        return false;
     }
-
     public static int getSigmaPosition() {
         return (int)Math.round(spindexerAngle / Constants.CPR * 3);
     }
