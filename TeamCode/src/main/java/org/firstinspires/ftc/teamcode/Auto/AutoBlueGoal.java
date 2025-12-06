@@ -144,7 +144,7 @@ public class AutoBlueGoal extends OpMode {
         follower.update();
         autonomousPathUpdate();
 
-        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false);
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false, 0);
 
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);

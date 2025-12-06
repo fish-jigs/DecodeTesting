@@ -49,15 +49,15 @@ public class AutonomousRedFar extends OpMode {
     private final Pose pickupPose2 = new Pose(120, 60, Math.toRadians(180));
     private final Pose pickup3Pose = new Pose(99, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     private final Pose pickupPose3 = new Pose(120, 36, Math.toRadians(180));
-    private final Pose gate2 = new Pose(123.5,76,Math.toRadians(90));
+    private final Pose endPose = new Pose(120,84,Math.toRadians(90));
     private Path scorePreload;
-    private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,gateSigma,gateSigma2,gateSigma3;
+    private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,end,gateSigma2,gateSigma3;
     public void buildPaths(){
         scorePreload = new Path(new BezierLine(startPose,scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(),scorePose.getHeading());
-        gateSigma = follower.pathBuilder()
-                .addPath(new BezierLine(pickupPose1,gate2))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),gate2.getHeading())
+        end = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose,endPose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(),endPose.getHeading())
                 .build();
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose,pickup1Pose))
@@ -69,7 +69,7 @@ public class AutonomousRedFar extends OpMode {
                 .setVelocityConstraint(20)
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(gate2,scorePose))
+                .addPath(new BezierLine(pickup1Pose,scorePose))
                 .setLinearHeadingInterpolation(pickupPose1.getHeading(),scorePose.getHeading())
                 .build();
         grabPickup2 = follower.pathBuilder()
@@ -124,7 +124,7 @@ public class AutonomousRedFar extends OpMode {
             case 4:
                 if (Spind.intaking(pathTimer,0.75))
                     if(!follower.isBusy()){
-                        follower.followPath(gateSigma, true);
+//                        follower.followPath(gateSigma, true);
                         setPathState(5);
                     }
                 break;
@@ -192,7 +192,7 @@ public class AutonomousRedFar extends OpMode {
                 break;
             case 16:
                 if(Spind.Launch3Balls(pathTimer, 0.75,1)){
-                    follower.followPath(gateSigma, true);
+                    follower.followPath(end, true);
                     shotPower = 0;
                     setPathState(17);
                 }
@@ -224,7 +224,7 @@ public class AutonomousRedFar extends OpMode {
         }
         Shooter.setPower(shotPower);
         Shooter.autoShotHood(144-follower.getPose().getX(), 144 - follower.getPose().getY());
-        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true, 0);
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());

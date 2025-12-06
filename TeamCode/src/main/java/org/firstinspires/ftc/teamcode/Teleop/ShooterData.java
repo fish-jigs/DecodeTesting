@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.Teleop;
-import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -21,7 +20,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
-@Config
 @TeleOp
 public class ShooterData extends OpMode {
     public static double power = 0;
@@ -140,7 +138,7 @@ public class ShooterData extends OpMode {
 
         Spind.spinTheDexer(spindPos);
 
-        double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
+        double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true, 0);
 
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
