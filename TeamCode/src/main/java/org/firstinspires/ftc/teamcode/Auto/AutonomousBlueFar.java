@@ -69,7 +69,7 @@ public class AutonomousBlueFar extends OpMode {
                 .setVelocityConstraint(20)
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1Pose,scorePose))
+                .addPath(new BezierLine(pickupPose1,scorePose))
                 .setLinearHeadingInterpolation(pickupPose1.getHeading(),scorePose.getHeading())
                 .build();
         grabPickup2 = follower.pathBuilder()
@@ -109,12 +109,16 @@ public class AutonomousBlueFar extends OpMode {
                 }
                 break;
             case 2:
-                if (!follower.isBusy() && Spind.Launch3Balls(pathTimer, 0.75,0.25)) {
+                if (!follower.isBusy()) {
+                    setPathState(6);
+                }
+                break;
+            case 6:
+                if (Spind.Launch3Balls(pathTimer, 0.75,1)) {
                     follower.followPath(grabPickup1, true);
                     shotPower = 0;
                     setPathState(3);
                 }
-                break;
             case 3:
                 if (!follower.isBusy()) {
                     follower.followPath(pickupGrab1, true);

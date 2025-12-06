@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Robot {
     public static DcMotorEx turret, spindexer, flywheel, intake;
 
-    public static Pose autoEnd = new Pose(72, 72, 0);
+    public static Pose autoEnd = new Pose(108, 9, Math.toRadians(90));
 
     public static Servo hood, transfer;
     public static Vision camera;

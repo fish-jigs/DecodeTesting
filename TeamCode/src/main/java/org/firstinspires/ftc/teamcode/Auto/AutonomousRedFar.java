@@ -43,12 +43,12 @@ public class AutonomousRedFar extends OpMode {
     private int pathState;
     private final Pose startPose = new Pose(84, 9, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(84, 84, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose pickup1Pose = new Pose(99, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose1 = new Pose(120, 84, Math.toRadians(180));
-    private final Pose pickup2Pose = new Pose(99, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose2 = new Pose(120, 60, Math.toRadians(180));
-    private final Pose pickup3Pose = new Pose(99, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose3 = new Pose(120, 36, Math.toRadians(180));
+    private final Pose pickup1Pose = new Pose(96, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose pickupPose1 = new Pose(124, 84, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(96, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickupPose2 = new Pose(124, 60, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(96, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose pickupPose3 = new Pose(124, 36, Math.toRadians(180));
     private final Pose endPose = new Pose(120,84,Math.toRadians(90));
     private Path scorePreload;
     private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,end,gateSigma2,gateSigma3;
@@ -65,11 +65,11 @@ public class AutonomousRedFar extends OpMode {
                 .build();
         pickupGrab1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose,pickupPose1))
-                .setConstantHeadingInterpolation(pickup1Pose.getHeading())
+                .setLinearHeadingInterpolation(pickup1Pose.getHeading(),pickupPose1.getHeading())
                 .setVelocityConstraint(20)
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1Pose,scorePose))
+                .addPath(new BezierLine(pickupPose1,scorePose))
                 .setLinearHeadingInterpolation(pickupPose1.getHeading(),scorePose.getHeading())
                 .build();
         grabPickup2 = follower.pathBuilder()
@@ -102,17 +102,16 @@ public class AutonomousRedFar extends OpMode {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 1:
-                if (!follower.isBusy()) {
-                    shotPower = 1;
-                    follower.followPath(scorePreload, true);
-                    setPathState(2);
-                }
+                shotPower = 1;
+                follower.followPath(scorePreload, true);
+                setPathState(2);
                 break;
             case 2:
-                if (!follower.isBusy() && Spind.Launch3Balls(pathTimer, 0.75,0.25)) {
-                    follower.followPath(grabPickup1, true);
-                    shotPower = 0;
-                    setPathState(3);
+                if (!follower.isBusy()) {
+                    if (pathTimer.getElapsedTimeSeconds() > 7 && Spind.Launch3Balls(pathTimer, 0.75,1)) {
+                        setPathState(3);
+                        shotPower = 0;
+                    }
                 }
                 break;
             case 3:
@@ -122,7 +121,7 @@ public class AutonomousRedFar extends OpMode {
                 }
                 break;
             case 4:
-                if (Spind.intaking(pathTimer,0.75))
+                if (Spind.intaking(pathTimer,0.75) || pathTimer.getElapsedTimeSeconds() > 6)
                     if(!follower.isBusy()){
 //                        follower.followPath(gateSigma, true);
                         setPathState(5);
@@ -141,7 +140,7 @@ public class AutonomousRedFar extends OpMode {
                 }
                 break;
             case 8:
-                if(Spind.Launch3Balls(pathTimer, 0.75,1)){
+                if(Spind.Launch3Balls(pathTimer, 0.75,1) || pathTimer.getElapsedTimeSeconds() > 4){
                     follower.followPath(grabPickup2, true);
                     shotPower = 0;
                     setPathState(9);
@@ -155,9 +154,9 @@ public class AutonomousRedFar extends OpMode {
                 }
                 break;
             case 10:
-                if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
+                if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 6) {
                     follower.followPath(scorePickup2, true);
-                    setPathState(16);
+                    setPathState(15);
                 }
                 break;
             case 11:
@@ -166,7 +165,7 @@ public class AutonomousRedFar extends OpMode {
                 }
                 break;
             case 12:
-                if(Spind.Launch3Balls(pathTimer, 0.75,1)){
+                if(Spind.Launch3Balls(pathTimer, 0.75,1) || pathTimer.getElapsedTimeSeconds() > 4){
                     follower.followPath(grabPickup3, true);
                     setPathState(13);
                 }
@@ -180,7 +179,7 @@ public class AutonomousRedFar extends OpMode {
                 }
                 break;
             case 14:
-                if(Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
+                if(Spind.intaking(pathTimer,0.75)&&!follower.isBusy() || pathTimer.getElapsedTimeSeconds() > 6) {
                     follower.followPath(scorePickup3,true);
                     setPathState(15);
                 }
@@ -191,7 +190,7 @@ public class AutonomousRedFar extends OpMode {
                 }
                 break;
             case 16:
-                if(Spind.Launch3Balls(pathTimer, 0.75,1)){
+                if(Spind.Launch3Balls(pathTimer, 0.75,1) || pathTimer.getElapsedTimeSeconds() > 4){
                     follower.followPath(end, true);
                     shotPower = 0;
                     setPathState(17);
