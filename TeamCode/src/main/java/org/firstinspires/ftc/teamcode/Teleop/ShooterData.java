@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Teleop;
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -20,11 +21,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
-@Configurable
+@Config
 @TeleOp
 public class ShooterData extends OpMode {
+    public static double power = 0;
     private Follower follower;
-    public static Pose startingPose = new Pose(0, 0, 0); //See ExampleAuto to understand how to use this
+    public static Pose startingPose = new Pose(72, 72, 0); //See ExampleAuto to understand how to use this
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
@@ -48,7 +50,7 @@ public class ShooterData extends OpMode {
         //The parameter controls whether the Follower should use break mode on the motors (using it is recommended).
         //In order to use float mode, add .useBrakeModeInTeleOp(true); to your Drivetrain Constants in Constant.java (for Mecanum)
         //If you don't pass anything in, it uses the default (false)
-        follower.startTeleopDrive(true);
+        follower.startTeleopDrive();
     }
 
     @Override
@@ -125,14 +127,14 @@ public class ShooterData extends OpMode {
         else if (!gamepad2.a)
             coooooking2 = true;
         if (gamepad2.x)
-            Robot.flywheel.setVelocity(-2*Math.PI, AngleUnit.RADIANS);
+            Shooter.setPower(power);
         if (gamepad2.b)
             Robot.flywheel.setPower(0);
         if (gamepad2.left_trigger > .6)
             Robot.flywheel.setPower(-.3);
 
         telemetry.addData("distance", Math.sqrt(Math.pow(144 - follower.getPose().getX(),2) + Math.pow(144 - follower.getPose().getY(), 2)));
-        telemetry.addData("velocity", Robot.flywheel.getVelocity(AngleUnit.RADIANS));
+        telemetry.addData("velocity", Shooter.getVel());
         telemetry.addData("hood", Shooter.getHood());
         Robot.intake.setPower(gamepad2.left_stick_y * Math.abs(gamepad2.left_stick_y));
 

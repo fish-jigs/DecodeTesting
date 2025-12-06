@@ -11,11 +11,8 @@ public class Shooter {
 
     //manual
     public static double getVel() {
+        velocity = -flywheel.getVelocity(AngleUnit.RADIANS);
         return velocity;
-    }
-
-    public static void setVelocity(double vel) {
-        flywheel.setVelocity(vel / 60 * 360, AngleUnit.DEGREES);
     }
 
     public static void setPower(double power) {
@@ -33,7 +30,7 @@ public class Shooter {
 
     //Automation
     public static double autoShotHood(double x, double y) {
-        velocity = flywheel.getVelocity();
+        velocity = -flywheel.getVelocity(AngleUnit.RADIANS);
         double dist = Math.sqrt(x * x + y * y);
         double hoodP = hoodVal(dist, velocity);
         hood.setPosition(hoodP);
@@ -41,6 +38,32 @@ public class Shooter {
     }
 
     private static double hoodVal(double dist, double velocity) {
-        return 0;
+        double ret = 0;
+        if (dist <= 60)
+            return 1;
+        else if (dist <=81.3) {
+            double slope = -0.02662 * dist + 2.4722;
+            double y_intercept = .099844 * dist - 9.12812;
+            ret = velocity * slope + y_intercept;
+            if (ret < 0)
+                return 0;
+            return ret;
+        }
+        else if (dist <= 102.12) {
+            double slope = -.00623055 * dist + .814544;
+            double y_intercept = .021861 * dist - 2.78813;
+            ret = velocity * slope + y_intercept;
+            if (ret < 0)
+                return 0;
+            return ret;
+        }
+        else {
+            double slope = -.000200639 * dist + .198769;
+            double y_intercept = -.0385703 * dist + 3.38311;
+            ret = velocity * slope + y_intercept;
+            if (ret < 0)
+                return 0;
+            return ret;
+        }
     }
 }

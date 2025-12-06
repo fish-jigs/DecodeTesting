@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Mechanics.Robot;
+import org.firstinspires.ftc.teamcode.Mechanics.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -21,7 +22,7 @@ import java.util.function.Supplier;
 @TeleOp
 public class Test extends OpMode {
     private Follower follower;
-    public static Pose startingPose = new Pose(0, 0); //See ExampleAuto to understand how to use this
+    public static Pose startingPose = new Pose(72, 72, 0); //See ExampleAuto to understand how to use this
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
@@ -69,22 +70,28 @@ public class Test extends OpMode {
             slowMode = !slowMode;
         }
 
-        //Optional way to change slow mode strength
-        if (gamepad1.xWasPressed()) {
-            slowModeMultiplier += 0.25;
-        }
-
-        //Optional way to change slow mode strength
-        if (gamepad2.yWasPressed()) {
-            slowModeMultiplier -= 0.25;
-        }
-
         telemetryM.debug("position", follower.getPose());
         telemetryM.debug("velocity", follower.getVelocity());
 
 
-        double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
+        if (gamepad2.x) {
+            Shooter.setPower(1);
+        }
+        if (gamepad2.b) {
+            Shooter.setPower(0);
+        }
+        if (gamepad2.right_trigger > .6) {
+            Robot.transfer.setPosition(.9);
+            try { Thread.sleep(100); } catch (Exception ignored) {}
+            Robot.transfer.setPosition(.4);
+        }
 
+
+        double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
+        Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY());
+
+        telemetry.addData("hood", Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY()));
+        telemetry.addData("velocity", Shooter.getVel());
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("theta", follower.getHeading());
