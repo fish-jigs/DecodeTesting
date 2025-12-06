@@ -121,14 +121,12 @@ public class AutonomousBlueFar extends OpMode {
                 if (Spind.intaking(pathTimer,0.75))
                     if(!follower.isBusy()){
                         follower.followPath(gateSigma, true);
-                        Spind.intaking();
                         setPathState(5);
                     }
                 break;
             case 5:
                 if (!follower.isBusy()) {
                     follower.followPath(scorePickup1, true);
-                    Spind.stopInt();
                     setPathState(7);
                     shotPower = 1;
                 }
@@ -155,13 +153,11 @@ public class AutonomousBlueFar extends OpMode {
             case 10:
                 if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
                     follower.followPath(scorePickup2, true);
-                    Spind.intaking();
                     setPathState(11);
                 }
                 break;
             case 11:
                 if (!follower.isBusy()) {
-                    Spind.stopInt();
                     setPathState(12);
                 }
                 break;
@@ -182,13 +178,11 @@ public class AutonomousBlueFar extends OpMode {
             case 14:
                 if(Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
                     follower.followPath(scorePickup3,true);
-                    Spind.intaking();
                     setPathState(15);
                 }
                 break;
             case 15:
                 if (!follower.isBusy()) {
-                    Spind.stopInt();
                     setPathState(16);
                 }
                 break;
