@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.TeleOp;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -11,6 +11,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 import org.firstinspires.ftc.teamcode.Mechanics.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanics.Spind;
@@ -124,14 +125,14 @@ public class ShooterData extends OpMode {
         else if (!gamepad2.a)
             coooooking2 = true;
         if (gamepad2.x)
-            Robot.flywheel.setPower(1);
+            Robot.flywheel.setVelocity(-2*Math.PI, AngleUnit.RADIANS);
         if (gamepad2.b)
             Robot.flywheel.setPower(0);
         if (gamepad2.left_trigger > .6)
             Robot.flywheel.setPower(-.3);
 
         telemetry.addData("distance", Math.sqrt(Math.pow(144 - follower.getPose().getX(),2) + Math.pow(144 - follower.getPose().getY(), 2)));
-        telemetry.addData("velocity", Shooter.getVel());
+        telemetry.addData("velocity", Robot.flywheel.getVelocity(AngleUnit.RADIANS));
         telemetry.addData("hood", Shooter.getHood());
         Robot.intake.setPower(gamepad2.left_stick_y * Math.abs(gamepad2.left_stick_y));
 
