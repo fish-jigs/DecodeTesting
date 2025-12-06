@@ -101,7 +101,7 @@ public class redT extends OpMode {
 //            Shooter.setHood(.5);
         if (gamepad2.right_trigger > .6) {
             Robot.transfer.setPosition(.9);
-            try { Thread.sleep(70); } catch (Exception ignored) {}
+            try { Thread.sleep(100); } catch (Exception ignored) {}
             Robot.transfer.setPosition(.4);
         }
         if (gamepad2.y && coooooking) {
