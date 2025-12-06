@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Mechanics.Color;
 import org.firstinspires.ftc.teamcode.Mechanics.Robot;
+import org.firstinspires.ftc.teamcode.Mechanics.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanics.Spind;
 import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.Mechanics.Vision;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @TeleOp(name = "Spindexer Test")
 public class SpindTest extends OpMode {
     private double slot;
+    private boolean yes = true;
+    private boolean yes2 = true;
     Timer sigma;
     Vision camera = new Vision();
     @Override
@@ -28,9 +31,35 @@ public class SpindTest extends OpMode {
 //                throw new RuntimeException(e);
 //            }
         }
-        if (gamepad1.x) {
+        if (gamepad1.x && yes) {
+            sigma.resetTimer();
+            yes = false;
+        }else if(gamepad1.x){
             Spind.updateBallList(sigma,0.75);
         }
+        else if(!gamepad1.x)
+            yes = true;
+
+        if (gamepad1.a && yes2){
+            sigma.resetTimer();
+            yes2 = false;
+        }
+        else if (gamepad1.a) {
+            try {
+                Spind.Launch3Balls(sigma,.75);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if (!gamepad1.a)
+            yes2 = true;
+
+        if (gamepad1.y) {
+            Shooter.setPower(1);
+        }
+
+        Shooter.autoShotHood(72, 72);
+
         //Spind.spinTheDexer(slot);
         for(int i =0;i<3;i++) {
             if(Spind.ballList[i]== Color.DetectedColor.PURPLE)
@@ -40,7 +69,6 @@ public class SpindTest extends OpMode {
             else if(Spind.ballList[i]== Color.DetectedColor.UNKNOWN)
                 telemetry.addData("list " + i, "no ball");
         }
-        Spind.updateBallList(sigma,0.75);
         telemetry.update();
     }
 

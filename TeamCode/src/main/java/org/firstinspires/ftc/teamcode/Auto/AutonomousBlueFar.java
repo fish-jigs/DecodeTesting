@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Auto; // make sure this aligns with class location
 
+import static org.firstinspires.ftc.teamcode.Mechanics.Robot.intake;
+import static org.firstinspires.ftc.teamcode.Mechanics.Robot.spindexer;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -31,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "blue far auto 🥶", group = "Blue Testing")
 public class AutonomousBlueFar extends OpMode {
     private Follower follower;
+    private double shotPower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     String motif = "";
@@ -39,40 +43,31 @@ public class AutonomousBlueFar extends OpMode {
     private final Pose startPose = new Pose(60, 9, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 84, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(45, 84, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose1 = new Pose(16, 84, Math.toRadians(0));
+    private final Pose pickupPose1 = new Pose(24, 84, Math.toRadians(0));
     private final Pose pickup2Pose = new Pose(45, 60, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose2 = new Pose(16, 60, Math.toRadians(0));
+    private final Pose pickupPose2 = new Pose(24, 60, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(45, 36, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose3 = new Pose(16, 36, Math.toRadians(0));
-    private final Pose gate1 = new Pose(48, 72, Math.toRadians(90));
-    private final Pose gate2 = new Pose(15,72,Math.toRadians(90));
+    private final Pose pickupPose3 = new Pose(24, 36, Math.toRadians(0));
+    private final Pose gate2 = new Pose(15,68,Math.toRadians(90));
     private Path scorePreload;
     private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,gateSigma,gateSigma2,gateSigma3;
     public void buildPaths(){
         scorePreload = new Path(new BezierLine(startPose,scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(),scorePose.getHeading());
         gateSigma = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,gate1))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),gate1.getHeading())
-                .build();
-        gateSigma2 = follower.pathBuilder()
-                .addPath(new BezierLine(gate1,gate2))
-                .setConstantHeadingInterpolation(gate1.getHeading())
-                .build();
-        gateSigma3 = follower.pathBuilder()
-                .addPath(new BezierLine(gate2,gate1))
-                .setConstantHeadingInterpolation(gate1.getHeading())
+                .addPath(new BezierLine(pickupPose1,gate2))
+                .setLinearHeadingInterpolation(scorePose.getHeading(),gate2.getHeading())
                 .build();
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(gate1,pickup1Pose))
-                .setLinearHeadingInterpolation(gate1.getHeading(),pickup1Pose.getHeading())
+                .addPath(new BezierLine(scorePose,pickup1Pose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(),pickup1Pose.getHeading())
                 .build();
         pickupGrab1 = follower.pathBuilder()
                 .addPath(new BezierLine(pickup1Pose,pickupPose1))
                 .setConstantHeadingInterpolation(pickup1Pose.getHeading())
                 .build();
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickupPose1,scorePose))
+                .addPath(new BezierLine(gate2,scorePose))
                 .setLinearHeadingInterpolation(pickupPose1.getHeading(),scorePose.getHeading())
                 .build();
         grabPickup2 = follower.pathBuilder()
@@ -102,109 +97,109 @@ public class AutonomousBlueFar extends OpMode {
     }
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
-            case 0:
-                follower.followPath(scorePreload);
-                setPathState(1);
-                break;
             case 1:
-                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
+                if (!follower.isBusy()) {
+                    shotPower = 1;
+                    follower.followPath(scorePreload, true);
                     setPathState(2);
                 }
                 break;
             case 2:
-                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
-                    follower.followPath(gateSigma, true);
+                if (!follower.isBusy() && Spind.Launch3Balls(pathTimer, 0.75)) {
+                    follower.followPath(grabPickup1, true);
+                    shotPower = 0;
                     setPathState(3);
                 }
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.followPath(gateSigma2, true);
+                    follower.followPath(pickupGrab1, true);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if (!follower.isBusy()) {
-                    follower.followPath(gateSigma3, true);
-                    setPathState(5);
-                }
+                if (Spind.intaking(pathTimer,0.75))
+                    if(!follower.isBusy()){
+                        follower.followPath(gateSigma, true);
+                        Spind.intaking();
+                        setPathState(5);
+                    }
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup1, true);
-                    setPathState(6);
-                }
-                break;
-            case 6:
-                if (!follower.isBusy()) {
-                    follower.followPath(pickupGrab1, true);
+                    follower.followPath(scorePickup1, true);
+                    Spind.stopInt();
                     setPathState(7);
+                    shotPower = 1;
                 }
                 break;
             case 7:
-                if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
-                    follower.followPath(scorePickup1, true);
+                if (!follower.isBusy()) {
                     setPathState(8);
                 }
                 break;
             case 8:
-                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
+                if(Spind.Launch3Balls(pathTimer, 0.75)){
+                    follower.followPath(grabPickup2, true);
+                    shotPower = 0;
                     setPathState(9);
                 }
                 break;
             case 9:
-                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
-                    follower.followPath(grabPickup2, true);
+                if (!follower.isBusy()) {
+                    follower.followPath(pickupGrab2, true);
                     setPathState(10);
+                    shotPower = 1;
                 }
                 break;
             case 10:
-                if (!follower.isBusy()) {
-                    follower.followPath(pickupGrab2, true);
+                if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
+                    follower.followPath(scorePickup2, true);
+                    Spind.intaking();
                     setPathState(11);
                 }
                 break;
             case 11:
-                if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
-                    follower.followPath(scorePickup2, true);
+                if (!follower.isBusy()) {
+                    Spind.stopInt();
                     setPathState(12);
                 }
                 break;
             case 12:
-                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
+                if(Spind.Launch3Balls(pathTimer, 0.75)){
+                    follower.followPath(grabPickup3, true);
                     setPathState(13);
                 }
                 break;
             case 13:
-                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
-                    follower.followPath(grabPickup3, true);
+                if (!follower.isBusy()) {
+                    shotPower = 0;
+                    follower.followPath(pickupGrab3, true);
                     setPathState(14);
+                    shotPower = 1;
                 }
                 break;
             case 14:
-                if (!follower.isBusy()) {
-                    follower.followPath(pickupGrab3, true);
+                if(Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
+                    follower.followPath(scorePickup3,true);
+                    Spind.intaking();
                     setPathState(15);
                 }
                 break;
             case 15:
-                if(Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
-                    follower.followPath(scorePickup3,true);
+                if (!follower.isBusy()) {
+                    Spind.stopInt();
                     setPathState(16);
                 }
                 break;
             case 16:
-                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
+                if(Spind.Launch3Balls(pathTimer, 0.75)){
+                    follower.followPath(gateSigma, true);
+                    shotPower = 0;
                     setPathState(17);
                 }
                 break;
             case 17:
-                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
-                    follower.followPath(gateSigma, true);
-                    setPathState(18);
-                }
-                break;
-            case 18:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
@@ -229,6 +224,7 @@ public class AutonomousBlueFar extends OpMode {
         if(motif.isEmpty()){
             motif = camera.findMotif();
         }
+        Shooter.setPower(shotPower);
         Shooter.autoShotHood(follower.getPose().getX(), 144 - follower.getPose().getY());
         Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false);
         // Feedback to Driver Hub for debugging
@@ -273,7 +269,9 @@ public class AutonomousBlueFar extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
-        setPathState(0);
+        setPathState(1);
+        if (motif.isEmpty())
+            motif = "PPG";
     }
 
     /** We do not use this because everything should automatically disable **/

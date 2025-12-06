@@ -17,6 +17,8 @@ public class Spind {
     public static Color.DetectedColor[] ballList = {Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN, Color.DetectedColor.UNKNOWN};
     public static boolean intaking = false;
     public static boolean[] launchedBalls = {false,false,false};
+
+    private static boolean p1, p2, p3;
     public static boolean spinTheDexer(double slot) {
         if(intaking)
             targetAngle = Constants.CPR / 3 * (slot+0.5);
@@ -28,8 +30,11 @@ public class Spind {
 
         spindexerAngle = spindexer.getCurrentPosition();
 
+        intake.setPower(-.5);
+
         if (Math.abs(spindexerAngle - targetAngle) <= 10) {
             spindexer.setPower(0);
+            intake.setPower(0);
             return true;
         }
         return false;
@@ -49,11 +54,10 @@ public class Spind {
     }
 
     public static boolean intaking(Timer timer,double timeBetweenSpins){
-        if(timer.getElapsedTimeSeconds()>3*timeBetweenSpins){
-            intake.setPower(0);
+        if(timer.getElapsedTimeSeconds()>5*timeBetweenSpins){
             return true;
         }
-        intake.setPower(1);
+        intake.setPower(-1);
         intaking=true;
         int index = (int)(timer.getElapsedTimeSeconds()/timeBetweenSpins);
         spinTheDexer(index);
@@ -64,7 +68,7 @@ public class Spind {
             intake.setPower(0);
             return true;
         }
-        intake.setPower(0.3);
+        intake.setPower(-0.5);
         intaking=false;
         int index=(int)(timer.getElapsedTimeSeconds()/timeBetweenSpins);
         if(spinTheDexer(index)&&Color.getColor()!= Color.DetectedColor.UNKNOWN) {
@@ -83,9 +87,8 @@ public class Spind {
                 launchedBalls[i]=false;
             return true;
         }
-        intake.setPower(0.3);
-        Shooter.setPower(1);
         intaking=false;
+        intake.setPower(-.5);
         int index = (int)(timer.getElapsedTimeSeconds()/timeBetweenShots);
         String[] motifList = motif.split("");
         if(motifList[index].equals("P")){
@@ -113,6 +116,44 @@ public class Spind {
             }
         }
         return false;
+    }
+    public static boolean Launch3Balls(Timer timer, double timeBetweenShots) throws InterruptedException {
+        if (timer.getElapsedTimeSeconds() < .1) {
+            p1 = false;
+            p2 = false;
+            p3 = false;
+            System.out.println("please?");
+        }
+        intaking = false;
+        System.out.println("Seriously? just here");
+        if (!p1 && spinTheDexer(0)) {
+            System.out.println("at least we're here");
+            transfer.setPosition(.9);
+            Thread.sleep(100);
+            transfer.setPosition(.4);
+            Thread.sleep(75);
+            p1 = true;
+        }
+
+        if (!p2 && p1 && spinTheDexer(1)) {
+            System.out.println("one step closer to freedom");
+            transfer.setPosition(.9);
+            Thread.sleep(100);
+            transfer.setPosition(.4);
+            Thread.sleep(75);
+            p2 = true;
+        }
+
+        if (!p3 && p1 && p2 && spinTheDexer(2)) {
+            System.out.println("freedom");
+            transfer.setPosition(.9);
+            Thread.sleep(100);
+            transfer.setPosition(.4);
+            Thread.sleep(75);
+            p3 = true;
+        }
+
+        return p1 && p2 && p3;
     }
 }
 

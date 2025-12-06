@@ -115,7 +115,7 @@ public class AutoBlueGoal extends OpMode {
         Robot.init(hardwareMap);
         follower = Constants.createFollower(hardwareMap);
         paths.blueGoal(follower);
-        follower.setStartingPose(new Pose(15.2, 110));
+        follower.setStartingPose(new Pose(15.2, 110, Math.PI / 2));
         camera.initAprilTag(hardwareMap);
         try {
             camera.setManualExposure(6, 250, telemetry);
