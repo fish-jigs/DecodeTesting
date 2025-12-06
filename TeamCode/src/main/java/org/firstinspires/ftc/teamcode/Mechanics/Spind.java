@@ -71,7 +71,7 @@ public class Spind {
                     setSpindToColor(Color.DetectedColor.GREEN);
                 //launch the balls;
                 transfer.setPosition(.9);
-                Thread.sleep(75);
+                try { Thread.sleep(100); } catch (Exception ignored) {}
                 transfer.setPosition(.4);
             }
             launching=false;
