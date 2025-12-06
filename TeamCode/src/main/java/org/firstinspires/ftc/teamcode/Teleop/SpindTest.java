@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -46,7 +46,7 @@ public class SpindTest extends OpMode {
         }
         else if (gamepad1.a) {
             try {
-                Spind.Launch3Balls(sigma,.75);
+                Spind.Launch3Balls(sigma,.75,1);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

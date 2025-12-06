@@ -32,8 +32,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "blue far auto 🥶", group = "Blue Testing")
-public class AutonomousBlueFar extends OpMode {
+@Autonomous(name = "red far auto 🔥", group = "Red auto")
+public class AutonomousRedFar extends OpMode {
     private Follower follower;
     private double shotPower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -41,15 +41,15 @@ public class AutonomousBlueFar extends OpMode {
     String motif = "";
     public Vision camera = new Vision();
     private int pathState;
-    private final Pose startPose = new Pose(60, 9, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(60, 84, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose pickup1Pose = new Pose(45, 84, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose1 = new Pose(24, 84, Math.toRadians(0));
-    private final Pose pickup2Pose = new Pose(45, 60, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose2 = new Pose(24, 60, Math.toRadians(0));
-    private final Pose pickup3Pose = new Pose(45, 36, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose3 = new Pose(24, 36, Math.toRadians(0));
-    private final Pose gate2 = new Pose(20.5,76,Math.toRadians(90));
+    private final Pose startPose = new Pose(84, 9, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose scorePose = new Pose(84, 84, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose pickup1Pose = new Pose(99, 84, Math.toRadians(180));// Highest (First Set) of Artifacts from the Spike Mark.
+    private final Pose pickupPose1 = new Pose(120, 84, Math.toRadians(180));
+    private final Pose pickup2Pose = new Pose(99, 60, Math.toRadians(180)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickupPose2 = new Pose(120, 60, Math.toRadians(180));
+    private final Pose pickup3Pose = new Pose(99, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose pickupPose3 = new Pose(120, 36, Math.toRadians(180));
+    private final Pose gate2 = new Pose(123.5,76,Math.toRadians(90));
     private Path scorePreload;
     private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,gateSigma,gateSigma2,gateSigma3;
     public void buildPaths(){
@@ -223,8 +223,8 @@ public class AutonomousBlueFar extends OpMode {
             motif = camera.findMotif();
         }
         Shooter.setPower(shotPower);
-        Shooter.autoShotHood(follower.getPose().getX(), 144 - follower.getPose().getY());
-        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false);
+        Shooter.autoShotHood(144-follower.getPose().getX(), 144 - follower.getPose().getY());
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());

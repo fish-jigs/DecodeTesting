@@ -54,7 +54,8 @@ public class Spind {
     }
 
     public static boolean intaking(Timer timer,double timeBetweenSpins){
-        if(timer.getElapsedTimeSeconds()>5*timeBetweenSpins){
+        if(timer.getElapsedTimeSeconds()>3*timeBetweenSpins){
+            spinTheDexer(0);
             return true;
         }
         intake.setPower(-1);
@@ -77,7 +78,7 @@ public class Spind {
         return false;
     }
     public static int getSigmaPosition() {
-        return (int)Math.round(spindexerAngle / Constants.CPR * 3);
+        return (int)Math.round(spindexer.getCurrentPosition() / Constants.CPR * 3);
     }
     public static boolean Launch3Balls(Timer timer,String motif,double timeBetweenShots) throws InterruptedException {
         if(timer.getElapsedTimeSeconds()>(3*timeBetweenShots)) {
@@ -117,13 +118,16 @@ public class Spind {
         }
         return false;
     }
-    public static boolean Launch3Balls(Timer timer, double timeBetweenShots) throws InterruptedException {
+    public static boolean Launch3Balls(Timer timer, double timeBetweenShots,double shooterSpeedTime) throws InterruptedException {
         if (timer.getElapsedTimeSeconds() < .1) {
             p1 = false;
             p2 = false;
             p3 = false;
             System.out.println("please?");
         }
+        intake.setPower(-.5);
+        if(timer.getElapsedTimeSeconds()<shooterSpeedTime)
+            return false;
         intaking = false;
         System.out.println("Seriously? just here");
         if (!p1 && spinTheDexer(0)) {

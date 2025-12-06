@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mechanics;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Robot {
     public static DcMotorEx turret, spindexer, flywheel, intake;
+
+    public static Pose autoEnd = new Pose(72, 72, 0);
 
     public static Servo hood, transfer;
     public static Vision camera;
