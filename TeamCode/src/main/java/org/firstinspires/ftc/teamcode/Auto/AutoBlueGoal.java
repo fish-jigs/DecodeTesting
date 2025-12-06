@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 import org.firstinspires.ftc.teamcode.Mechanics.Spind;
 import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.Paths.paths;
@@ -110,11 +111,17 @@ public class AutoBlueGoal extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-        camera.initAprilTag(hardwareMap);
-
+        camera = new Vision();
+        Robot.init(hardwareMap);
         follower = Constants.createFollower(hardwareMap);
         paths.blueGoal(follower);
         follower.setStartingPose(new Pose(15.2, 110));
+        camera.initAprilTag(hardwareMap);
+        try {
+            camera.setManualExposure(6, 250, telemetry);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

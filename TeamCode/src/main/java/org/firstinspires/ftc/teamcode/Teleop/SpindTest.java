@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @TeleOp(name = "Spindexer Test")
 public class SpindTest extends OpMode {
     private double slot;
+    Timer sigma;
     Vision camera = new Vision();
     @Override
     public void loop() {
@@ -28,7 +29,7 @@ public class SpindTest extends OpMode {
 //            }
         }
         if (gamepad1.x) {
-            //Spind.updateBallList();
+            Spind.updateBallList(sigma,0.75);
         }
         //Spind.spinTheDexer(slot);
         for(int i =0;i<3;i++) {
@@ -39,6 +40,7 @@ public class SpindTest extends OpMode {
             else if(Spind.ballList[i]== Color.DetectedColor.UNKNOWN)
                 telemetry.addData("list " + i, "no ball");
         }
+        Spind.updateBallList(sigma,0.75);
         telemetry.update();
     }
 
@@ -52,6 +54,7 @@ public class SpindTest extends OpMode {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        sigma = new Timer();
     }
 
     /** This method is called continuously after Init while waiting for "play". **/

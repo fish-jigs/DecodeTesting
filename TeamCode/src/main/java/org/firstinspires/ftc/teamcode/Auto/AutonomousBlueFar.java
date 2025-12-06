@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.Mechanics.Color;
 import org.firstinspires.ftc.teamcode.Mechanics.Robot;
+import org.firstinspires.ftc.teamcode.Mechanics.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanics.Spind;
 import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.Mechanics.Vision;
@@ -228,6 +229,7 @@ public class AutonomousBlueFar extends OpMode {
         if(motif.isEmpty()){
             motif = camera.findMotif();
         }
+        Shooter.autoShotHood(follower.getPose().getX(), 144 - follower.getPose().getY());
         Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false);
         // Feedback to Driver Hub for debugging
         telemetry.addData("path state", pathState);

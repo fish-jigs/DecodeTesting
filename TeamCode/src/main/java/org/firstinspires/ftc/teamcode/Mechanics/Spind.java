@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mechanics;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,7 +23,7 @@ public class Spind {
         else
             targetAngle = Constants.CPR / 3 * slot;
         spindexer.setTargetPosition((int)Math.round(targetAngle));
-        spindexer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        spindexer.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         spindexer.setPower(1);
 
         spindexerAngle = spindexer.getCurrentPosition();
@@ -66,7 +67,6 @@ public class Spind {
         int index=(int)(timer.getElapsedTimeSeconds()/timeBetweenSpins);
         if(spinTheDexer(index)&&Color.getColor()!= Color.DetectedColor.UNKNOWN) {
             ballList[index] = Color.getColor();
-            timer.resetTimer();
         }
         return false;
     }
@@ -75,10 +75,12 @@ public class Spind {
     }
     public static boolean Launch3Balls(Timer timer,String motif,double timeBetweenShots) throws InterruptedException {
         if(timer.getElapsedTimeSeconds()>(3*timeBetweenShots)) {
+            Shooter.setPower(0);
             for(int i =0;i<3;i++)
                 launchedBalls[i]=false;
             return true;
         }
+        Shooter.setPower(1);
         intaking=false;
         int index = (int)(timer.getElapsedTimeSeconds()/timeBetweenShots);
         String[] motifList = motif.split("");
