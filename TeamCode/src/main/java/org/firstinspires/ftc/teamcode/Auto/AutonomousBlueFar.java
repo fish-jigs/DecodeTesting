@@ -50,6 +50,7 @@ public class AutonomousBlueFar extends OpMode {
     private final Pose pickup3Pose = new Pose(144 - 96, 36, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     private final Pose pickupPose3 = new Pose(144 - 124, 36, Math.toRadians(0));
     private final Pose endPose = new Pose(144 - 120,84,Math.toRadians(90));
+
     private Path scorePreload;
     private PathChain grabPickup1,pickupGrab1, scorePickup1, grabPickup2, pickupGrab2, scorePickup2, grabPickup3,pickupGrab3, scorePickup3,end,gateSigma2,gateSigma3;
     public void buildPaths(){
