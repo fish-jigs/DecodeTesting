@@ -61,8 +61,10 @@ public class Spind {
     }
     public static boolean updateBallList(Timer timer,double timeBetweenSpins) {
         if(timer.getElapsedTimeSeconds()>3*timeBetweenSpins){
+            intake.setPower(0);
             return true;
         }
+        intake.setPower(0.3);
         intaking=false;
         int index=(int)(timer.getElapsedTimeSeconds()/timeBetweenSpins);
         if(spinTheDexer(index)&&Color.getColor()!= Color.DetectedColor.UNKNOWN) {
@@ -75,11 +77,13 @@ public class Spind {
     }
     public static boolean Launch3Balls(Timer timer,String motif,double timeBetweenShots) throws InterruptedException {
         if(timer.getElapsedTimeSeconds()>(3*timeBetweenShots)) {
+            intake.setPower(0);
             Shooter.setPower(0);
             for(int i =0;i<3;i++)
                 launchedBalls[i]=false;
             return true;
         }
+        intake.setPower(0.3);
         Shooter.setPower(1);
         intaking=false;
         int index = (int)(timer.getElapsedTimeSeconds()/timeBetweenShots);
