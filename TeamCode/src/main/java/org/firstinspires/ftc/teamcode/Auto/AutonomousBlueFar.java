@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "blue far auto 🥶", group = "Blue Testing")
 public class AutonomousBlueFar extends OpMode {
-    public Color colorSen= new Color();
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -37,7 +36,7 @@ public class AutonomousBlueFar extends OpMode {
     public Vision camera = new Vision();
     private int pathState;
     private final Pose startPose = new Pose(60, 9, Math.toRadians(90)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(60, 84, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
+    private final Pose scorePose = new Pose(60, 84, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(45, 84, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickupPose1 = new Pose(16, 84, Math.toRadians(0));
     private final Pose pickup2Pose = new Pose(45, 60, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
@@ -107,82 +106,104 @@ public class AutonomousBlueFar extends OpMode {
                 setPathState(1);
                 break;
             case 1:
-                if (!follower.isBusy()&&Spind.updateBallList(pathTimer,0.75)) {
-                    setPathState(14);
-                }
-                break;
-            case 14:
-                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
-                    follower.followPath(gateSigma, true);
+                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
                     setPathState(2);
                 }
+                break;
             case 2:
-                if (!follower.isBusy()) {
-                    follower.followPath(gateSigma2, true);
+                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
+                    follower.followPath(gateSigma, true);
                     setPathState(3);
                 }
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    follower.followPath(gateSigma3, true);
+                    follower.followPath(gateSigma2, true);
                     setPathState(4);
                 }
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup1, true);
+                    follower.followPath(gateSigma3, true);
                     setPathState(5);
                 }
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(pickupGrab1, true);
+                    follower.followPath(grabPickup1, true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(scorePickup1, true);
+                    follower.followPath(pickupGrab1, true);
                     setPathState(7);
                 }
                 break;
             case 7:
-                if (!follower.isBusy()) {
-                    follower.followPath(grabPickup2, true);
+                if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
+                    follower.followPath(scorePickup1, true);
                     setPathState(8);
                 }
                 break;
             case 8:
-                if (!follower.isBusy()) {
-                    follower.followPath(pickupGrab2, true);
+                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
                     setPathState(9);
                 }
                 break;
             case 9:
-                if (!follower.isBusy()) {
-                    follower.followPath(scorePickup2, true);
+                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
+                    follower.followPath(grabPickup2, true);
                     setPathState(10);
                 }
                 break;
             case 10:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup3, true);
+                    follower.followPath(pickupGrab2, true);
                     setPathState(11);
                 }
                 break;
             case 11:
-                if(!follower.isBusy()) {
-                    follower.followPath(pickupGrab3,true);
+                if (Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
+                    follower.followPath(scorePickup2, true);
                     setPathState(12);
                 }
                 break;
             case 12:
-                if(!follower.isBusy()) {
-                    follower.followPath(scorePickup3,true);
+                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
                     setPathState(13);
                 }
                 break;
             case 13:
+                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
+                    follower.followPath(grabPickup3, true);
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if (!follower.isBusy()) {
+                    follower.followPath(pickupGrab3, true);
+                    setPathState(15);
+                }
+                break;
+            case 15:
+                if(Spind.intaking(pathTimer,0.75)&&!follower.isBusy()) {
+                    follower.followPath(scorePickup3,true);
+                    setPathState(16);
+                }
+                break;
+            case 16:
+                if (Spind.updateBallList(pathTimer,0.75)&&!follower.isBusy()) {
+                    setPathState(17);
+                }
+                break;
+            case 17:
+                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
+                    follower.followPath(gateSigma, true);
+                    setPathState(18);
+                }
+                break;
+            case 18:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }

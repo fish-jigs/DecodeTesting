@@ -21,11 +21,11 @@ public class SpindTest extends OpMode {
             slot = 2;
         }
         if(gamepad1.b){
-            try {
-                Spind.Launch3Balls("PPG");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+//                Spind.Launch3Balls("PPG");
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
         }
         if (gamepad1.x) {
             //Spind.updateBallList();
