@@ -95,16 +95,11 @@ public class redT extends OpMode {
             slowModeMultiplier -= 0.25;
         }
 
-
-
         //driver 2
         if (gamepad2.startWasPressed()) {
             manual = !manual;
         }
-        if (gamepad2.right_bumper)
-            Shooter.setHood(0.2);
-//        if (gamepad2.left_bumper)
-//            Shooter.setHood(.5);
+
         if (gamepad2.right_trigger > .6) {
             Robot.transfer.setPosition(.9);
             try { Thread.sleep(100); } catch (Exception ignored) {}

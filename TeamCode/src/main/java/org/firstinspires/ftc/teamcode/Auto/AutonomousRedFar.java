@@ -221,7 +221,7 @@ public class AutonomousRedFar extends OpMode {
         if(motif.isEmpty()){
             motif = camera.findMotif();
         }
-        Shooter.setPower(shotPower);
+        Shooter.setPower(shotPower * .85);
         Shooter.autoShotHood(144-follower.getPose().getX(), 144 - follower.getPose().getY());
         Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true, 0);
         // Feedback to Driver Hub for debugging
