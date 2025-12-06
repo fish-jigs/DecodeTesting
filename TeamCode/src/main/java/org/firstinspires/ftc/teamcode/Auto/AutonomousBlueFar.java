@@ -35,11 +35,6 @@ public class AutonomousBlueFar extends OpMode {
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     String motif = "";
     public Vision camera = new Vision();
-    private AprilTagProcessor aprilTag;
-    private VisionPortal visionPortal;
-    private Spind spind;
-    private double spindexerAngle;
-    private boolean opModeIsActive = false;
     private int pathState;
     private final Pose startPose = new Pose(60, 9, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose scorePose = new Pose(60, 84, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
@@ -105,21 +100,22 @@ public class AutonomousBlueFar extends OpMode {
                 .setLinearHeadingInterpolation(pickupPose3.getHeading(),scorePose.getHeading())
                 .build();
     }
-
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                if(Spind.updateBallList(pathTimer,0.75)) {
-                    setPathState(1);
-                }
+                setPathState(1);
                 break;
             case 1:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy()&&Spind.updateBallList(pathTimer,0.75)) {
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if(Spind.Launch3Balls(pathTimer, motif, 0.75)){
                     follower.followPath(gateSigma, true);
                     setPathState(2);
                 }
-                break;
             case 2:
                 if (!follower.isBusy()) {
                     follower.followPath(gateSigma2, true);
@@ -253,7 +249,6 @@ public class AutonomousBlueFar extends OpMode {
      * It runs all the setup actions, including building paths and starting the path system **/
     @Override
     public void start() {
-        opModeIsActive=true;
         opmodeTimer.resetTimer();
         setPathState(0);
     }
@@ -261,7 +256,6 @@ public class AutonomousBlueFar extends OpMode {
     /** We do not use this because everything should automatically disable **/
     @Override
     public void stop() {
-        opModeIsActive=false;
     }
 
 }

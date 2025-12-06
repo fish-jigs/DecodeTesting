@@ -30,7 +30,7 @@ public class Spind {
         return false;
     }
 
-    private static void setSpindToColor(Color.DetectedColor color) {
+    private static boolean setSpindToColor(Color.DetectedColor color) {
         int index=-1;
         for(int i=0;i<3;i++){
             if (ballList[i]==color) {
@@ -38,8 +38,9 @@ public class Spind {
                 break;
             }
         }
-        if(index!=-1)
-            spinTheDexer(index);
+        if(index==-1)
+            return false;
+        return spinTheDexer(index);
     }
     public static void bruh(Telemetry telemetry){
         if(ballList[getSigmaPosition()]== Color.DetectedColor.UNKNOWN)
@@ -59,24 +60,26 @@ public class Spind {
     public static int getSigmaPosition() {
         return (int)Math.round(spindexerAngle / Constants.CPR * 3);
     }
-    private static boolean launching = false;
-    public static boolean Launch3Balls(String motif) throws InterruptedException {
-        if (!motif.isEmpty()&&!launching) {
-            String[] motifList = motif.split("");
-            launching = true;
-            for (String a : motifList) {
-                if (a.equals("P"))
-                    setSpindToColor(Color.DetectedColor.PURPLE);
-                else
-                    setSpindToColor(Color.DetectedColor.GREEN);
-                //launch the balls;
-                transfer.setPosition(.9);
-                try { Thread.sleep(100); } catch (Exception ignored) {}
-                transfer.setPosition(.4);
+    public static boolean Launch3Balls(Timer timer,String motif,double timeBetweenShots) throws InterruptedException {
+        if(timer.getElapsedTimeSeconds()>(3*timeBetweenShots))
+            return true;
+        int index = (int)(timer.getElapsedTimeSeconds()/timeBetweenShots);
+        String[] motifList = motif.split("");
+        if(motifList[index].equals("P")){
+            if(setSpindToColor(Color.DetectedColor.PURPLE)) {
+                transfer.setPosition(0.9);
+                Thread.sleep(100);
+                transfer.setPosition(0.4);
             }
-            launching=false;
         }
-        return launching;
+        else if(motifList[index].equals("G")){
+            if(setSpindToColor(Color.DetectedColor.GREEN)) {
+                transfer.setPosition(0.9);
+                Thread.sleep(100);
+                transfer.setPosition(0.4);
+            }
+        }
+        return false;
     }
 }
 
