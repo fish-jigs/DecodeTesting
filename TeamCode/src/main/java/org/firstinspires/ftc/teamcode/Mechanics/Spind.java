@@ -73,7 +73,7 @@ public class Spind {
     }
 
     public static boolean intaking(Timer timer,double timeBetweenSpins){
-        if(timer.getElapsedTimeSeconds()>3*timeBetweenSpins){
+        if(timer.getElapsedTimeSeconds()>5*timeBetweenSpins){
             spinTheDexer(0);
             return true;
         }

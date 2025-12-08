@@ -45,8 +45,8 @@ public class AutonomousBlueFar extends OpMode {
     private final Pose scorePose = new Pose(144 - 84, 84, Math.toRadians(90)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickup1Pose = new Pose(144 - 96, 84, Math.toRadians(0));// Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose pickupPose1 = new Pose(144 - 124, 84, Math.toRadians(0));
-    private final Pose pickup2Pose = new Pose(144 - 96, 60, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickupPose2 = new Pose(144 - 124, 60, Math.toRadians(0));
+    private final Pose pickup2Pose = new Pose(144 - 96, 58, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
+    private final Pose pickupPose2 = new Pose(144 - 124, 58, Math.toRadians(0));
     private final Pose pickup3Pose = new Pose(144 - 96, 36, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     private final Pose pickupPose3 = new Pose(144 - 124, 36, Math.toRadians(0));
     private final Pose endPose = new Pose(144 - 120,84,Math.toRadians(90));
@@ -103,12 +103,12 @@ public class AutonomousBlueFar extends OpMode {
     public void autonomousPathUpdate() throws InterruptedException {
         switch (pathState) {
             case 1:
-                shotPower = 1;
                 follower.followPath(scorePreload, true);
                 setPathState(2);
                 break;
             case 2:
                 if (!follower.isBusy()) {
+                    shotPower = 1;
                     if (pathTimer.getElapsedTimeSeconds() > 7 && Spind.Launch3Balls(pathTimer, 0.75,1)) {
                         setPathState(3);
                         shotPower = 0;
@@ -222,7 +222,7 @@ public class AutonomousBlueFar extends OpMode {
         if(motif.isEmpty()){
             motif = camera.findMotif();
         }
-        Shooter.setPower(shotPower * .85);
+        Shooter.setPower(shotPower);
         Shooter.autoShotHood(follower.getPose().getX(), 144 - follower.getPose().getY());
         Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false, 0);
         // Feedback to Driver Hub for debugging
