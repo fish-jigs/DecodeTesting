@@ -87,7 +87,7 @@ public class Test extends OpMode {
         }
 
 
-        double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true);
+        double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true, 0);
         Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY());
 
         telemetry.addData("hood", Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY()));

@@ -40,6 +40,25 @@ public class Spind {
         return false;
     }
 
+    public static boolean spinTheDexer(double slot, boolean Teleop) {
+        if(intaking)
+            targetAngle = Constants.CPR / 3 * (slot+0.5);
+        else
+            targetAngle = Constants.CPR / 3 * slot;
+        spindexer.setTargetPosition((int)Math.round(targetAngle));
+        spindexer.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        spindexer.setPower(1);
+
+        spindexerAngle = spindexer.getCurrentPosition();
+
+
+        if (Math.abs(spindexerAngle - targetAngle) <= 10) {
+            spindexer.setPower(0);
+            intake.setPower(0);
+            return true;
+        }
+        return false;
+    }
     private static boolean setSpindToColor(Color.DetectedColor color) {
         int index=-1;
         for(int i=0;i<3;i++){

@@ -36,6 +36,10 @@ public class BlueT extends OpMode {
     private double slowModeMultiplier = 0.5;
     private boolean manual = true;
 
+    private double off = 0;
+    private boolean offsetswitch = true;
+    private boolean offsetswitch2 = true;
+
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
@@ -61,8 +65,8 @@ public class BlueT extends OpMode {
         telemetryM.update();
         //This is the normal version to use in the TeleOp
         if (!slowMode) follower.setTeleOpDrive(
-                -gamepad1.left_stick_y,
-                -gamepad1.left_stick_x,
+                gamepad1.left_stick_y,
+                gamepad1.left_stick_x,
                 -gamepad1.right_stick_x,
                 false // Robot Centric
         );
@@ -134,20 +138,36 @@ public class BlueT extends OpMode {
         if (gamepad2.left_trigger > .6)
             Robot.flywheel.setPower(-.5);
 
+        if (gamepad2.right_bumper && offsetswitch) {
+            off += Math.toRadians(1);
+            offsetswitch = false;
+        }
+        else if (!gamepad2.right_bumper) {
+            offsetswitch = true;
+        }
+        if (gamepad2.left_bumper && offsetswitch2) {
+            off -= Math.toRadians(1);
+            offsetswitch2 = false;
+        }
+        else if (!gamepad2.left_bumper) {
+            offsetswitch2 = true;
+        }
+
 
         Robot.intake.setPower(gamepad2.left_stick_y * Math.abs(gamepad2.left_stick_y));
 
         Shooter.autoShotHood(follower.getPose().getX(), 144 - follower.getPose().getY());
 
-        Spind.spinTheDexer(spindPos);
+        Spind.spinTheDexer(spindPos,true);
 
-        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false);
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), false, off);
 
 
 
         telemetryM.debug("position", follower.getPose());
         telemetryM.debug("velocity", follower.getVelocity());
-        telemetry.addData("x", follower.getPose().getX());
+        telemetry
+                .addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("theta", follower.getHeading());
         telemetry.update();

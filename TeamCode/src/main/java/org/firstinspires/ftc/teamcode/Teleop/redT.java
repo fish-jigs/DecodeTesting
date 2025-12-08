@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
+import static org.firstinspires.ftc.teamcode.Mechanics.Robot.autoEnd;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -29,20 +31,24 @@ public class redT extends OpMode {
 
     private double spindPos = 0;
     private Follower follower;
-    public static Pose startingPose = new Pose(108, 84, Math.toRadians(180));
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
     private boolean manual = true;
     private boolean red = true;
 
+
+    private double off = 0;
+    private boolean offsetswitch = true;
+    private boolean offsetswitch2 = true;
+
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose);
+        follower.setStartingPose(autoEnd);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
-        Robot.init(hardwareMap);
+//        Robot.init(hardwareMap);
     }
 
     @Override
@@ -89,16 +95,11 @@ public class redT extends OpMode {
             slowModeMultiplier -= 0.25;
         }
 
-
-
         //driver 2
         if (gamepad2.startWasPressed()) {
             manual = !manual;
         }
-        if (gamepad2.right_bumper)
-            Shooter.setHood(0.2);
-//        if (gamepad2.left_bumper)
-//            Shooter.setHood(.5);
+
         if (gamepad2.right_trigger > .6) {
             Robot.transfer.setPosition(.9);
             try { Thread.sleep(100); } catch (Exception ignored) {}
@@ -131,16 +132,32 @@ public class redT extends OpMode {
         if (gamepad2.b)
             Robot.flywheel.setPower(0);
         if (gamepad2.left_trigger > .6)
-            Robot.flywheel.setPower(-.3);
+            Robot.flywheel.setPower(-.5);
         if (gamepad2.left_bumper)
             red = !red;
+        if (gamepad2.right_bumper && offsetswitch) {
+            off += Math.toRadians(1);
+            offsetswitch = false;
+        }
+        else if (!gamepad2.right_bumper) {
+            offsetswitch = true;
+        }
+        if (gamepad2.left_bumper && offsetswitch2) {
+            off -= Math.toRadians(1);
+            offsetswitch2 = false;
+        }
+        else if (!gamepad2.left_bumper) {
+            offsetswitch2 = true;
+        }
+
 
         Robot.intake.setPower(gamepad2.left_stick_y * Math.abs(gamepad2.left_stick_y));
 
+        Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY());
 
-        Spind.spinTheDexer(spindPos);
+        Spind.spinTheDexer(spindPos, true);
 
-        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), red);
+        Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true, off);
 
 
 

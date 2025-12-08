@@ -42,7 +42,7 @@ public class Constants {
             .strafeEncoder_HardwareMapName("front_left_motor")
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
-                    new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP)
+                    new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.DOWN)
             )
             .forwardEncoderDirection(Encoder.FORWARD)
             .strafeEncoderDirection(Encoder.FORWARD)
