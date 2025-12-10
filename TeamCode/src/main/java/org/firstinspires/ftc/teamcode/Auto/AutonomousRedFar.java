@@ -108,7 +108,7 @@ public class AutonomousRedFar extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    if (pathTimer.getElapsedTimeSeconds() > 7 && Spind.Launch3Balls(pathTimer, 0.75,1)) {
+                    if (pathTimer.getElapsedTimeSeconds() > 1 && Spind.Launch3Balls(pathTimer, 0.75,1)) {
                         setPathState(3);
                         shotPower = 0;
                     }
