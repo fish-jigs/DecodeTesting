@@ -14,6 +14,7 @@ public class Robot {
     public static Pose autoEnd = new Pose(108, 9, Math.toRadians(90));
 
     public static Servo hood, transfer;
+    public static Color sensor1, sensor2,sensor3;
     public static Vision camera;
     public static void init(HardwareMap hardwareMap) {
         turret = hardwareMap.get(DcMotorEx.class, "turn");
@@ -42,7 +43,9 @@ public class Robot {
         transfer = hardwareMap.get(Servo.class, "trans");
 
         //camera.initAprilTag(hardwareMap);
-        Color.init(hardwareMap);
+        sensor1.init(hardwareMap, "sensor1");
+        sensor2.init(hardwareMap, "sensor2");
+        sensor3.init(hardwareMap, "sensor3");
     }
 
     public static void reset() {

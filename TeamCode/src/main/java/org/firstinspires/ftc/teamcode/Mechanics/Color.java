@@ -7,18 +7,12 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Color {
-    static NormalizedColorSensor colorSensor;
-    public enum DetectedColor{
-        PURPLE,
-        GREEN,
-        UNKNOWN,
-        NOBALL
-    }
-    public static void init(HardwareMap hwMap){
-        colorSensor = hwMap.get(NormalizedColorSensor.class,"ColorSensorSigma");
+    NormalizedColorSensor colorSensor;
+    public void init(HardwareMap hwMap, String name){
+        colorSensor = hwMap.get(NormalizedColorSensor.class,name);
         colorSensor.setGain(20);
     }
-    public static DetectedColor getColor(Telemetry telemetry){
+    public String getColor(Telemetry telemetry){
         NormalizedRGBA color = colorSensor.getNormalizedColors();
         float normRed, normGreen, normBlue;
         normRed=color.red/color.alpha;
@@ -38,12 +32,12 @@ public class Color {
         green = <.3, >0.75, <0.8
          */
         if(normRed>0.25&&normGreen<0.5&&normGreen>0.3&&normBlue>0.7)
-            return DetectedColor.PURPLE;
+            return "P";
         else if(normGreen>0.6&&normRed<0.2&&normBlue>0.5)
-            return DetectedColor.GREEN;
-        return DetectedColor.UNKNOWN;
+            return "G";
+        return "";
     }
-    public static DetectedColor getColor(){
+    public String getColor(){
         NormalizedRGBA color = colorSensor.getNormalizedColors();
         float normRed, normGreen, normBlue;
         normRed=color.red/color.alpha;
@@ -55,10 +49,10 @@ public class Color {
         double value = hsv[2];
         if(value+sat>1.2)
             if(Math.abs(hue-220)<20)
-                return DetectedColor.PURPLE;
+                return "P";
             else if(Math.abs(hue-167)<20)
-                return DetectedColor.GREEN;
-        return DetectedColor.UNKNOWN;
+                return "G";
+        return "";
     }
     private static double[] getHSV(double r, double g, double b){
         double max = Math.max(r, g);

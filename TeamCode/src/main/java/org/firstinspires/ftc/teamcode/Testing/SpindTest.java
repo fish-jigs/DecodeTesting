@@ -20,7 +20,7 @@ public class SpindTest extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.a) {
-            Spind.setSpindToColor(Color.DetectedColor.PURPLE);
+            Spind.setSpindToMotif("PPG");
         }
 //        if(gamepad1.b){
 //            try {
@@ -30,8 +30,7 @@ public class SpindTest extends OpMode {
 //            }
 //        }
         if(gamepad1.b){
-            Spind.spinTheDexer(0.5);
-            Spind.updateBallList(new Timer(),0);
+            Spind.updateBallList();
         }
         if (gamepad1.x && yes) {
             sigma.resetTimer();
@@ -64,11 +63,11 @@ public class SpindTest extends OpMode {
 
         //Spind.spinTheDexer(slot);
         for(int i =0;i<3;i++) {
-            if(Spind.ballList[i]== Color.DetectedColor.PURPLE)
+            if(Spind.ballList[i].equals("P"))
                 telemetry.addData("list " + i, "purple");
-            else if(Spind.ballList[i]== Color.DetectedColor.GREEN)
+            else if(Spind.ballList[i].equals("G"))
                 telemetry.addData("list " + i, "green");
-            else if(Spind.ballList[i]== Color.DetectedColor.UNKNOWN)
+            else if(Spind.ballList[i].isEmpty())
                 telemetry.addData("list " + i, "no ball");
         }
         telemetry.update();
