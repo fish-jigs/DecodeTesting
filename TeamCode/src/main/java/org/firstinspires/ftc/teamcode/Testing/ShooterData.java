@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.Testing;
+import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -20,11 +21,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.function.Supplier;
 
-@TeleOp
+@Config
+@TeleOp(name = "shooterData", group = "testing")
 public class ShooterData extends OpMode {
     public static double power = 0;
     private Follower follower;
-    public static Pose startingPose = new Pose(72, 72, 0); //See ExampleAuto to understand how to use this
+    public static Pose startingPose = new Pose(9, 8.25, 0); //See ExampleAuto to understand how to use this
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
@@ -125,9 +127,9 @@ public class ShooterData extends OpMode {
         else if (!gamepad2.a)
             coooooking2 = true;
         if (gamepad2.x)
-            Shooter.setPower(power);
+            Shooter.setPower(0);
         if (gamepad2.b)
-            Robot.flywheel.setPower(0);
+            Robot.flywheel.setPower(power);
         if (gamepad2.left_trigger > .6)
             Robot.flywheel.setPower(-.3);
 
@@ -139,7 +141,6 @@ public class ShooterData extends OpMode {
         Spind.spinTheDexer(spindPos);
 
         double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true, 0);
-
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("theta", follower.getHeading());

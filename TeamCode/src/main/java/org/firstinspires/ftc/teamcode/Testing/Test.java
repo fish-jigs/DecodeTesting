@@ -1,13 +1,9 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.Testing;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,8 +11,6 @@ import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 import org.firstinspires.ftc.teamcode.Mechanics.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.util.function.Supplier;
 
 @Configurable
 @TeleOp
@@ -88,9 +82,9 @@ public class Test extends OpMode {
 
 
         double t = Turret.faceGoal(follower.getPose().getX(), follower.getPose().getY(), follower.getHeading(), true, 0);
-        Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY());
+        Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY(), follower.getHeading(), true);
 
-        telemetry.addData("hood", Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY()));
+        telemetry.addData("hood", Shooter.autoShotHood(144 - follower.getPose().getX(), 144 - follower.getPose().getY(), follower.getHeading(), true));
         telemetry.addData("velocity", Shooter.getVel());
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());

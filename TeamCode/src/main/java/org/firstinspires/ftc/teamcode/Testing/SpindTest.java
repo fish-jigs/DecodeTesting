@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.Testing;
 
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -8,9 +8,7 @@ import org.firstinspires.ftc.teamcode.Mechanics.Color;
 import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 import org.firstinspires.ftc.teamcode.Mechanics.Shooter;
 import org.firstinspires.ftc.teamcode.Mechanics.Spind;
-import org.firstinspires.ftc.teamcode.Mechanics.Turret;
 import org.firstinspires.ftc.teamcode.Mechanics.Vision;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @TeleOp(name = "Spindexer Test")
 public class SpindTest extends OpMode {
@@ -22,20 +20,24 @@ public class SpindTest extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.a) {
-            slot = 2;
+            Spind.setSpindToColor(Color.DetectedColor.PURPLE);
         }
-        if(gamepad1.b){
+//        if(gamepad1.b){
 //            try {
 //                Spind.Launch3Balls("PPG");
 //            } catch (InterruptedException e) {
 //                throw new RuntimeException(e);
 //            }
+//        }
+        if(gamepad1.b){
+            Spind.spinTheDexer(0.5);
+            Spind.updateBallList(new Timer(),0);
         }
         if (gamepad1.x && yes) {
             sigma.resetTimer();
             yes = false;
         }else if(gamepad1.x){
-            Spind.updateBallList(sigma,0.75);
+            //Spind.updateBallList(sigma,0.75);
         }
         else if(!gamepad1.x)
             yes = true;
@@ -58,7 +60,7 @@ public class SpindTest extends OpMode {
             Shooter.setPower(1);
         }
 
-        Shooter.autoShotHood(72, 72);
+        Shooter.autoShotHood(72, 72, 0, true);
 
         //Spind.spinTheDexer(slot);
         for(int i =0;i<3;i++) {

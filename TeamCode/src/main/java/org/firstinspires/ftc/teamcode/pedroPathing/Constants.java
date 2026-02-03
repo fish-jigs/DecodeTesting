@@ -14,13 +14,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
-    public static double CPR = ((((1+(46D/17))) * (1+(46D/11))) * 28);
+    public static double CPR312 = ((((1+(46D/17))) * (1+(46D/11))) * 28);
+    public static double CPR1150 = ((1+(46D/11)) * 28);
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(10.7)
             .forwardZeroPowerAcceleration(-59.57090583619754)
             .lateralZeroPowerAcceleration(-84.38145712859071)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0.01, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.5,0,.07,0))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0.02, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.2,0,.07,0))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(1.1, 0, .07, .6,.01))
             .centripetalScaling(0.00025);
 
@@ -48,7 +49,7 @@ public class Constants {
             .strafeEncoderDirection(Encoder.FORWARD)
             .forwardTicksToInches(.002968434)
             .strafeTicksToInches(.00197895601)
-            .forwardPodY(6+7.0/16)
+            .forwardPodY(6 + 7.0 / 16)
             .strafePodX(3.2912680654);
 
 
