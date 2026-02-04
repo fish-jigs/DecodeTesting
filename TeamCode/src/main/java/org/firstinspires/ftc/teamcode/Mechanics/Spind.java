@@ -68,12 +68,14 @@ public class Spind {
         ballList[1] = sensor2.getColor();
         ballList[2] = sensor3.getColor();
     }
+
+    // launches 3 balls
     public static boolean Launch3Balls(String motif){
-        if(setSpindToMotif(motif)) {
+        if(!setSpindToMotif(motif)) {
             flywheel.setVelocity(4.5, AngleUnit.RADIANS);
             return false;
         }
-        return spinTheDexer(4);
+        return spinTheDexer(-4);
     }
     public static boolean Launch3Balls(Timer timer, double timeBetweenShots,double shooterSpeedTime) throws InterruptedException {
         if (timer.getElapsedTimeSeconds() < .1) {
