@@ -41,7 +41,7 @@ public class Spind {
         }
         return false;
     }
-    public static boolean intaking(Timer timer, float time){
+    public static boolean intaking(Timer timer, double time){
         if(timer.getElapsedTimeSeconds()>time){
             intake.setPower(0);
             return true;

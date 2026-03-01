@@ -22,7 +22,7 @@ public class Robot {
         flywheel = hardwareMap.get(DcMotorEx.class, "shot");
         intake = hardwareMap.get(DcMotorEx.class, "inta");
 
-
+        flywheel.setDirection(DcMotor.Direction.REVERSE);
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         spindexer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

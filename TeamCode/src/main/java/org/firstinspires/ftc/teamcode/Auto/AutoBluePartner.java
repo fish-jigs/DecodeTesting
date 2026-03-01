@@ -64,7 +64,7 @@ public class AutoBluePartner extends OpMode {
             case 3:
                 if (!follower.isBusy()) {
                     follower.followPath(intake1, true);
-                    if (Spind.intaking(pathTimer,intTime) || pathTimer.getElapsedTimeSeconds() > 6)
+                    if (Spind.intaking(pathTimer, intTime) || pathTimer.getElapsedTimeSeconds() > 6)
                         setPathState(4);
                 }
                 break;
@@ -98,7 +98,7 @@ public class AutoBluePartner extends OpMode {
             case 9:
                 if (!follower.isBusy()) {
                     follower.followPath(intake2, true);
-                    if (Spind.intaking(pathTimer, intTime) || pathTimer.getElapsedTimeSeconds() > 6) {
+                    if (Spind.intaking(pathTimer,intTime) || pathTimer.getElapsedTimeSeconds() > 6) {
                         setPathState(10);
                         shotPower = sPow;
                         faceGoal = true;
