@@ -17,20 +17,23 @@ import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 @Config
 @TeleOp(name = "pidtesting", group = "testing")
 public class PIDTuning extends OpMode {
-    public static double spindPosP,spindPosI,spindPosD,spindPosF,spindVelP,spindVelI,spindVelD,spindVelF,turretP,turretI,turretD,turretF,spindPosTarget,spindVelTarget,turretTarget;
-    //working values spindpos{},spindVel{},turret{}
-    private PIDFController spindPosController, spindVelController,turretController;
-    private PIDFCoefficients spindPosCoef, spindVelCoef,turretCoef;
+    public static double spindPosP,spindPosI,spindPosD,spindPosF,spindVelP,spindVelI,spindVelD,spindVelF,turretP,turretI,turretD,turretF,spindPosTarget,spindVelTarget,turretTarget,shooterVelP,shooterVelI,shooterVelD,shooterVelF, shooterTarget;
+    //working values spindpos{,,},spindVel{,,},turret{,,}, shooter{,,}
+    private PIDFController spindPosController, spindVelController,turretController,shooterController;
+    private PIDFCoefficients spindPosCoef, spindVelCoef,turretCoef,shooterCoef;
     boolean spindVel = false;
     boolean aPressed;
-    DcMotorEx turret,spindexer;
+    DcMotorEx turret,spindexer,shooter;
     @Override
     public void init() {
         turret = hardwareMap.get(DcMotorEx.class, "turn");
         spindexer = hardwareMap.get(DcMotorEx.class, "spind");
+        shooter = hardwareMap.get(DcMotorEx.class, "shot");
         spindPosCoef = new PIDFCoefficients(spindPosP,spindPosI,spindPosD,spindPosF);
         spindVelCoef= new PIDFCoefficients(spindVelP,spindVelI,spindVelD,spindVelF);
         turretCoef = new PIDFCoefficients(turretP,turretI,turretD,turretF);
+        shooterCoef = new PIDFCoefficients(shooterVelP,shooterVelI,shooterVelD,shooterVelF);
+        shooterController = new PIDFController(shooterCoef);
         spindPosController = new PIDFController(spindPosCoef);
         spindVelController = new PIDFController(spindVelCoef);
         turretController = new PIDFController(turretCoef);
@@ -59,13 +62,17 @@ public class PIDTuning extends OpMode {
         spindPosController.setTargetPosition(spindPosTarget);
         spindVelController.setTargetPosition(spindVelTarget);
         turretController.setTargetPosition(turretTarget);
+        shooterController.setTargetPosition(shooterTarget);
+
         spindPosCoef.setCoefficients(spindPosP,spindPosI,spindPosD,spindPosF);
         spindVelCoef.setCoefficients(spindVelP,spindVelI,spindVelD,spindVelF);
         turretCoef.setCoefficients(turretP,turretI,turretD,turretF);
+        shooterCoef.setCoefficients(shooterVelP,shooterVelI,shooterVelD,shooterVelF);
+
         spindPosController.setCoefficients(spindPosCoef);
         spindVelController.setCoefficients(spindVelCoef);
         turretController.setCoefficients(turretCoef);
-
+        shooterController.setCoefficients(shooterCoef);
         if(spindVel) {
             spindexer.setPower(spindVelController.run());
             spindPosController.updatePosition(spindexer.getVelocity(AngleUnit.RADIANS));
@@ -75,13 +82,15 @@ public class PIDTuning extends OpMode {
         }
         turret.setPower(turretController.run());
         turretController.updatePosition(turret.getCurrentPosition());
+
+        shooter.setPower(turretController.run());
+        shooterController.updatePosition(shooter.getVelocity(AngleUnit.RADIANS));
         if(gamepad1.a&&!aPressed){
             spindVel=!spindVel;
             aPressed=true;
-        }else if(!gamepad1.a){
-            aPressed=false;
+        }else if(!gamepad1.a) {
+            aPressed = false;
         }
-
     }
 
     /*
