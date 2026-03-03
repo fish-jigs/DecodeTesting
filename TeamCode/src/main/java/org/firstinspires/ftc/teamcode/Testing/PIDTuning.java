@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Mechanics.Robot;
 @TeleOp(name = "pidtesting", group = "testing")
 public class PIDTuning extends OpMode {
     public static double spindPosP,spindPosI,spindPosD,spindPosF,spindVelP,spindVelI,spindVelD,spindVelF,turretP,turretI,turretD,turretF,spindPosTarget,spindVelTarget,turretTarget,shooterVelP,shooterVelI,shooterVelD,shooterVelF, shooterTarget;
-    //working values spindpos{,,},spindVel{,,},turret{,,}, shooter{,,}
+    //working values spindpos{,,},spindVel{,,},turret{.04,.0001,.0012}, shooter{,,}
     private PIDFController spindPosController, spindVelController,turretController,shooterController;
     private PIDFCoefficients spindPosCoef, spindVelCoef,turretCoef,shooterCoef;
     boolean spindVel = false;
@@ -29,6 +29,8 @@ public class PIDTuning extends OpMode {
         turret = hardwareMap.get(DcMotorEx.class, "turn");
         spindexer = hardwareMap.get(DcMotorEx.class, "spind");
         shooter = hardwareMap.get(DcMotorEx.class, "shot");
+        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        spindexer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         spindPosCoef = new PIDFCoefficients(spindPosP,spindPosI,spindPosD,spindPosF);
         spindVelCoef= new PIDFCoefficients(spindVelP,spindVelI,spindVelD,spindVelF);
         turretCoef = new PIDFCoefficients(turretP,turretI,turretD,turretF);
@@ -75,7 +77,7 @@ public class PIDTuning extends OpMode {
         shooterController.setCoefficients(shooterCoef);
         if(spindVel) {
             spindexer.setPower(spindVelController.run());
-            spindPosController.updatePosition(spindexer.getVelocity(AngleUnit.RADIANS));
+            spindPosController.updatePosition(spindexer.getVelocity());
         }else{
             spindexer.setPower(spindPosController.run());
             spindPosController.updatePosition(spindexer.getCurrentPosition());
@@ -83,14 +85,19 @@ public class PIDTuning extends OpMode {
         turret.setPower(turretController.run());
         turretController.updatePosition(turret.getCurrentPosition());
 
-        shooter.setPower(turretController.run());
-        shooterController.updatePosition(shooter.getVelocity(AngleUnit.RADIANS));
+        shooter.setPower(shooterController.run());
+        shooterController.updatePosition(shooter.getVelocity());
         if(gamepad1.a&&!aPressed){
             spindVel=!spindVel;
             aPressed=true;
         }else if(!gamepad1.a) {
             aPressed = false;
         }
+        telemetry.addData("shooterVel",shooter.getVelocity());
+        telemetry.addData("spind velocity",spindexer.getVelocity());
+        telemetry.addData("Spind position", spindexer.getCurrentPosition());
+        telemetry.addData("turret position",turret.getCurrentPosition());
+        telemetry.update();
     }
 
     /*
