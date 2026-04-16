@@ -60,6 +60,12 @@ public class LinearSlide extends OpMode{
         }else if(targetHeight<0){
             targetHeight=0;
         }
+        if(gamepad1.a){
+            targetHeight=Constants.CPR312*1.5;
+        }
+        if(gamepad1.b){
+            targetHeight=0;
+        }
     }
     @Override
     public void stop() {
